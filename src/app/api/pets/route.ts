@@ -21,11 +21,11 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const body = await req.json()
-  const { owner_name, mobile, pet_name, pet_type, pet_age } = body
+  const { owner_name, mobile, pet_name, pet_type, pet_age, gender, breed } = body
   if (!owner_name || !mobile || !pet_name) {
     return NextResponse.json({ error: 'Owner name, mobile and pet name are required' }, { status: 400 })
   }
-  const { data, error } = await supabase.from('pets').insert([{ owner_name, mobile, pet_name, pet_type: pet_type || 'Dog', pet_age }]).select()
+  const { data, error } = await supabase.from('pets').insert([{ owner_name, mobile, pet_name, pet_type: pet_type || 'Dog', pet_age, gender, breed }]).select()
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json({ success: true, pet: data?.[0] })
 }

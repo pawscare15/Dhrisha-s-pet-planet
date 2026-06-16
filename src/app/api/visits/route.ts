@@ -22,7 +22,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   const body = await req.json()
-  const { pet_id, visit_date, diagnosis, treatment, medicines, reminder_option, custom_days, reminder_message } = body
+  const { pet_id, visit_date, complaint, clinical_signs, diagnosis, treatment, medicines, reminder_option, custom_days, reminder_message } = body
 
   if (!pet_id || !diagnosis || !treatment) {
     return NextResponse.json({ error: 'pet_id, diagnosis and treatment are required' }, { status: 400 })
@@ -43,6 +43,8 @@ export async function POST(req: NextRequest) {
   const { data, error } = await supabase.from('visits').insert([{
     pet_id,
     visit_date: visit_date || new Date().toISOString().split('T')[0],
+    complaint,
+    clinical_signs,
     diagnosis,
     treatment,
     medicines,

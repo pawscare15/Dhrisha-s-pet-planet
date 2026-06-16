@@ -11,6 +11,8 @@ export type Pet = {
   pet_name: string
   pet_type: string
   pet_age?: string
+  gender?: string
+  breed?: string
   notes?: string
   created_at?: string
 }
@@ -19,6 +21,8 @@ export type Visit = {
   id?: string
   pet_id: string
   visit_date: string
+  complaint?: string
+  clinical_signs?: string
   diagnosis: string
   treatment: string
   medicines?: string

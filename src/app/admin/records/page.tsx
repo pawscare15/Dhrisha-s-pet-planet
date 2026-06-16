@@ -1,5 +1,5 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { supabase } from '@/lib/supabase'
 import type { Pet, Visit } from '@/lib/supabase'
 import { Search, Plus, X, Edit2, Trash2 } from 'lucide-react'
@@ -8,16 +8,24 @@ type PetWithVisits = Pet & { visits: Visit[] }
 
 const REMINDER_OPTIONS = [
   { value: '15',     label: '15 days' },
-  { value: '30',     label: '30 days' },
+  { value: '30',     label: '1 month' },
+  { value: '60',     label: '2 months' },
+  { value: '90',     label: '3 months' },
   { value: '180',    label: '6 months' },
   { value: '365',    label: '1 year' },
   { value: 'custom', label: 'Custom days' },
 ]
 
+const DEFAULT_REMINDER_MSG = `Dear [Pet Parent], your [pet name] visit to clinic is due for vaccinations/deworming/tick treatments/treatment follow up Visit Dhrisha's Pet Planet - Bhagya nagar 2nd cross (9.30am to 6.30pm) & Paws Care and heal pet clinic - Hanuman nagar (6.45pm to 8.30pm - Sunday Holiday)`
+
 const EMPTY_VISIT_FORM = {
   visit_date: new Date().toISOString().split('T')[0],
-  diagnosis: '', treatment: '', medicines: '',
-  reminder_option: '30', custom_days: '', reminder_message: '',
+  complaint: '',
+  clinical_signs: '',
+  diagnosis: '',
+  treatment: '',
+  medicines: '',
+  reminder_option: '30', custom_days: '', reminder_message: DEFAULT_REMINDER_MSG,
 }
 
 export default function AdminRecordsPage() {
@@ -32,17 +40,30 @@ export default function AdminRecordsPage() {
   const [visitSaved, setVisitSaved] = useState(false)
   const [petSaved, setPetSaved] = useState(false)
 
-  const [petForm, setPetForm] = useState({ owner_name:'', mobile:'', pet_name:'', pet_type:'Dog', pet_age:'' })
-  const [editForm, setEditForm] = useState({ owner_name:'', mobile:'', pet_name:'', pet_type:'Dog', pet_age:'' })
+  const [petForm, setPetForm] = useState({ owner_name:'', mobile:'', pet_name:'', pet_type:'Dog', pet_age:'', gender:'Male', breed:'' })
+  const [editForm, setEditForm] = useState({ owner_name:'', mobile:'', pet_name:'', pet_type:'Dog', pet_age:'', gender:'Male', breed:'' })
   const [visitForm, setVisitForm] = useState(EMPTY_VISIT_FORM)
   const [editVisitForm, setEditVisitForm] = useState(EMPTY_VISIT_FORM)
 
   const inp = 'w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:border-amber-400 transition-colors bg-white'
 
+  useEffect(() => {
+    loadAllPets()
+  }, [])
+
+  const loadAllPets = async () => {
+    setLoadingSearch(true)
+    const { data } = await supabase.from('pets').select('*').limit(100).order('created_at', { ascending: false })
+    setResults(data || [])
+    setLoadingSearch(false)
+  }
+
   const calcReminderDate = (form: typeof visitForm) => {
     const base = new Date(form.visit_date || new Date())
     const days = form.reminder_option === 'custom'
       ? (parseInt(form.custom_days) || 30)
+      : form.reminder_option === '60' ? 60
+      : form.reminder_option === '90' ? 90
       : form.reminder_option === '180' ? 180
       : form.reminder_option === '365' ? 365
       : parseInt(form.reminder_option)
@@ -51,7 +72,7 @@ export default function AdminRecordsPage() {
   }
 
   const searchPets = async () => {
-    if (!query.trim()) return
+    if (!query.trim()) { loadAllPets(); return }
     setLoadingSearch(true)
     setSelected(null)
     const { data } = await supabase.from('pets').select('*')
@@ -76,9 +97,10 @@ export default function AdminRecordsPage() {
     if (!error && data) {
       setPetSaved(true); setTimeout(() => setPetSaved(false), 3000)
       setShowAddPet(false)
-      setPetForm({ owner_name:'', mobile:'', pet_name:'', pet_type:'Dog', pet_age:'' })
+      setPetForm({ owner_name:'', mobile:'', pet_name:'', pet_type:'Dog', pet_age:'', gender:'Male', breed:'' })
       setSelected({ ...data[0], visits: [] })
       setResults([])
+      loadAllPets()
     } else alert('Error: ' + error?.message)
   }
 
@@ -90,6 +112,8 @@ export default function AdminRecordsPage() {
       pet_name: selected.pet_name,
       pet_type: selected.pet_type,
       pet_age: selected.pet_age || '',
+      gender: selected.gender || 'Male',
+      breed: selected.breed || '',
     })
     setShowEditPet(true)
   }
@@ -123,12 +147,14 @@ export default function AdminRecordsPage() {
   const saveVisit = async () => {
     if (!selected) return
     if (!visitForm.diagnosis.trim() || !visitForm.treatment.trim()) {
-      alert('Diagnosis and Treatment are required'); return
+      alert('Diagnosis and Treatments are required'); return
     }
     const reminderDate = calcReminderDate(visitForm)
     const { error } = await supabase.from('visits').insert([{
       pet_id: selected.id!,
       visit_date: visitForm.visit_date,
+      complaint: visitForm.complaint,
+      clinical_signs: visitForm.clinical_signs,
       diagnosis: visitForm.diagnosis,
       treatment: visitForm.treatment,
       medicines: visitForm.medicines,
@@ -144,13 +170,13 @@ export default function AdminRecordsPage() {
     } else alert('Error saving visit: ' + error.message)
   }
 
-  // ── Edit visit ──
   const openEditVisit = (v: Visit) => {
     setEditingVisit(v)
     setShowAddVisit(false)
-    // Reverse-calculate reminder_option from days diff
     setEditVisitForm({
       visit_date: v.visit_date,
+      complaint: v.complaint || '',
+      clinical_signs: v.clinical_signs || '',
       diagnosis: v.diagnosis,
       treatment: v.treatment,
       medicines: v.medicines || '',
@@ -163,11 +189,13 @@ export default function AdminRecordsPage() {
   const updateVisit = async () => {
     if (!selected || !editingVisit) return
     if (!editVisitForm.diagnosis.trim() || !editVisitForm.treatment.trim()) {
-      alert('Diagnosis and Treatment are required'); return
+      alert('Diagnosis and Treatments are required'); return
     }
     const reminderDate = calcReminderDate(editVisitForm)
     const { error } = await supabase.from('visits').update({
       visit_date: editVisitForm.visit_date,
+      complaint: editVisitForm.complaint,
+      clinical_signs: editVisitForm.clinical_signs,
       diagnosis: editVisitForm.diagnosis,
       treatment: editVisitForm.treatment,
       medicines: editVisitForm.medicines,
@@ -190,6 +218,11 @@ export default function AdminRecordsPage() {
     } else alert('Error deleting visit: ' + error.message)
   }
 
+  const backToGrid = () => {
+    setSelected(null)
+    loadAllPets()
+  }
+
   return (
     <div className="overflow-hidden">
       {visitSaved && <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-3 mb-4 text-green-700 font-semibold text-sm">✅ Visit record saved successfully!</div>}
@@ -209,7 +242,7 @@ export default function AdminRecordsPage() {
           style={{ background: '#F59E0B' }}>
           🔍 Search
         </button>
-        <button onClick={() => { setShowAddPet(!showAddPet); setSelected(null); setResults([]) }}
+        <button onClick={() => { setShowAddPet(!showAddPet); setSelected(null) }}
           className="flex items-center gap-2 text-white font-extrabold text-sm px-4 py-3 rounded-xl transition-all hover:-translate-y-0.5"
           style={{ background: '#111827' }}>
           <Plus size={16}/> New Pet
@@ -229,12 +262,20 @@ export default function AdminRecordsPage() {
             <div><label className="block text-xs font-bold text-gray-600 mb-1.5">Mobile *</label>
               <input value={petForm.mobile} onChange={e=>setPetForm(p=>({...p,mobile:e.target.value}))} placeholder="10-digit" maxLength={10} className={inp}/></div>
           </div>
-          <div className="grid sm:grid-cols-3 gap-4 mb-5">
+          <div className="grid sm:grid-cols-3 gap-4 mb-4">
             <div><label className="block text-xs font-bold text-gray-600 mb-1.5">Pet Name *</label>
               <input value={petForm.pet_name} onChange={e=>setPetForm(p=>({...p,pet_name:e.target.value}))} placeholder="e.g. Tommy" className={inp}/></div>
             <div><label className="block text-xs font-bold text-gray-600 mb-1.5">Pet Type</label>
               <select value={petForm.pet_type} onChange={e=>setPetForm(p=>({...p,pet_type:e.target.value}))} className={inp}>
                 <option>Dog</option><option>Cat</option><option>Rabbit</option><option>Bird</option><option>Other</option>
+              </select></div>
+            <div><label className="block text-xs font-bold text-gray-600 mb-1.5">Breed</label>
+              <input value={petForm.breed} onChange={e=>setPetForm(p=>({...p,breed:e.target.value}))} placeholder="e.g. Labrador, Persian" className={inp}/></div>
+          </div>
+          <div className="grid sm:grid-cols-2 gap-4 mb-5">
+            <div><label className="block text-xs font-bold text-gray-600 mb-1.5">Gender</label>
+              <select value={petForm.gender} onChange={e=>setPetForm(p=>({...p,gender:e.target.value}))} className={inp}>
+                <option value="Male">Male</option><option value="Female">Female</option>
               </select></div>
             <div><label className="block text-xs font-bold text-gray-600 mb-1.5">Age</label>
               <input value={petForm.pet_age} onChange={e=>setPetForm(p=>({...p,pet_age:e.target.value}))} placeholder="e.g. 3 years" className={inp}/></div>
@@ -259,12 +300,20 @@ export default function AdminRecordsPage() {
             <div><label className="block text-xs font-bold text-gray-600 mb-1.5">Mobile *</label>
               <input value={editForm.mobile} onChange={e=>setEditForm(p=>({...p,mobile:e.target.value}))} maxLength={10} className={inp}/></div>
           </div>
-          <div className="grid sm:grid-cols-3 gap-4 mb-5">
+          <div className="grid sm:grid-cols-3 gap-4 mb-4">
             <div><label className="block text-xs font-bold text-gray-600 mb-1.5">Pet Name *</label>
               <input value={editForm.pet_name} onChange={e=>setEditForm(p=>({...p,pet_name:e.target.value}))} className={inp}/></div>
             <div><label className="block text-xs font-bold text-gray-600 mb-1.5">Pet Type</label>
               <select value={editForm.pet_type} onChange={e=>setEditForm(p=>({...p,pet_type:e.target.value}))} className={inp}>
                 <option>Dog</option><option>Cat</option><option>Rabbit</option><option>Bird</option><option>Other</option>
+              </select></div>
+            <div><label className="block text-xs font-bold text-gray-600 mb-1.5">Breed</label>
+              <input value={editForm.breed} onChange={e=>setEditForm(p=>({...p,breed:e.target.value}))} className={inp}/></div>
+          </div>
+          <div className="grid sm:grid-cols-2 gap-4 mb-5">
+            <div><label className="block text-xs font-bold text-gray-600 mb-1.5">Gender</label>
+              <select value={editForm.gender} onChange={e=>setEditForm(p=>({...p,gender:e.target.value}))} className={inp}>
+                <option value="Male">Male</option><option value="Female">Female</option>
               </select></div>
             <div><label className="block text-xs font-bold text-gray-600 mb-1.5">Age</label>
               <input value={editForm.pet_age} onChange={e=>setEditForm(p=>({...p,pet_age:e.target.value}))} className={inp}/></div>
@@ -276,47 +325,69 @@ export default function AdminRecordsPage() {
         </div>
       )}
 
-      {/* Search results list + detail panel */}
+      {/* Pet grid + detail panel */}
       {!showAddPet && !showEditPet && (
-        <div className={`grid gap-5 ${selected ? 'lg:grid-cols-[280px_1fr]' : ''}`}>
-          {/* Results list */}
-          {results.length > 0 && (
-            <div className="flex flex-col gap-2">
-              {results.map(pet => (
-                <div key={pet.id} onClick={() => loadPetDetail(pet)} className="flex items-center gap-3 p-4 rounded-2xl cursor-pointer transition-all"
-                  style={{
-                    background: selected?.id === pet.id ? '#5BC8D4' : '#fff',
-                    border: `1.5px solid ${selected?.id === pet.id ? '#3AABB8' : '#e5e7eb'}`,
-                  }}>
-                  <div className="w-11 h-11 rounded-full flex items-center justify-center text-2xl flex-shrink-0"
-                    style={{ background: selected?.id === pet.id ? 'rgba(255,255,255,.25)' : '#FEF3C7' }}>
-                    {pet.pet_type === 'Cat' ? '🐈' : pet.pet_type === 'Dog' ? '🐕' : '🐾'}
-                  </div>
-                  <div>
-                    <div className="font-extrabold text-sm" style={{ color: selected?.id === pet.id ? '#fff' : '#111' }}>{pet.pet_name}</div>
-                    <div className="text-xs" style={{ color: selected?.id === pet.id ? 'rgba(255,255,255,.8)' : '#888' }}>
-                      {pet.owner_name} · {pet.pet_type}
-                    </div>
-                  </div>
+        <div className={`grid gap-5 ${selected ? 'lg:grid-cols-[320px_1fr]' : ''}`}>
+          {/* Pet cards grid */}
+          {!selected && (
+            <>
+              {loadingSearch ? (
+                <div className="text-center py-10 text-amber-500 font-bold">Loading pets…</div>
+              ) : results.length === 0 ? (
+                <div className="text-center py-16 text-gray-400">
+                  <div className="text-5xl mb-4">🐾</div>
+                  <div className="font-bold text-gray-500 text-lg mb-2">No pet records found</div>
+                  <div className="text-sm">Add a new pet record or try a different search</div>
                 </div>
-              ))}
-            </div>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                  {results.map(pet => (
+                    <div key={pet.id} onClick={() => loadPetDetail(pet)}
+                      className="rounded-2xl overflow-hidden cursor-pointer transition-all hover:-translate-y-1 hover:shadow-lg border border-gray-100 bg-white"
+                      style={{ boxShadow: '0 1px 6px rgba(0,0,0,.06)' }}>
+                      <div className="h-24 flex items-center justify-center text-5xl"
+                        style={{ background: pet.gender === 'Female' ? '#FCE7F3' : '#DBEAFE' }}>
+                        {pet.pet_type === 'Cat' ? '🐈' : pet.pet_type === 'Dog' ? '🐕' : '🐾'}
+                      </div>
+                      <div className="p-3">
+                        <div className="font-extrabold text-sm truncate">{pet.pet_name}</div>
+                        <div className="text-[11px] text-gray-500 truncate">
+                          {pet.breed || pet.pet_type}{pet.gender ? ` · ${pet.gender}` : ''}
+                        </div>
+                        <div className="text-[11px] text-gray-400 truncate">{pet.owner_name}</div>
+                        <div className="text-[11px] text-gray-400 truncate">{pet.mobile}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
           )}
 
           {/* Detail panel */}
           {selected ? (
             <div className="min-w-0">
+              {/* Back button on mobile */}
+              <button onClick={backToGrid}
+                className="mb-3 flex items-center gap-1.5 text-sm font-bold text-amber-600 hover:text-amber-700 transition-colors lg:hidden">
+                ← Back to all records
+              </button>
+
               {/* Pet header */}
               <div className="bg-white rounded-2xl border-2 p-5 mb-4" style={{ borderColor: '#F59E0B' }}>
                 <div className="flex items-start justify-between flex-wrap gap-3">
                   <div className="flex items-center gap-4">
                     <div className="w-14 h-14 rounded-full flex items-center justify-center text-3xl flex-shrink-0"
-                      style={{ background: '#FEF3C7' }}>
+                      style={{ background: selected.gender === 'Female' ? '#FCE7F3' : '#DBEAFE' }}>
                       {selected.pet_type === 'Cat' ? '🐈' : '🐕'}
                     </div>
                     <div>
                       <div className="font-black text-xl">{selected.pet_name}</div>
-                      <div className="text-sm text-gray-500">{selected.pet_type}{selected.pet_age ? ` · ${selected.pet_age}` : ''}</div>
+                      <div className="text-sm text-gray-500">
+                        {selected.breed || selected.pet_type}
+                        {selected.gender ? ` · ${selected.gender}` : ''}
+                        {selected.pet_age ? ` · ${selected.pet_age}` : ''}
+                      </div>
                       <div className="text-sm text-gray-500">👤 {selected.owner_name} · 📞 {selected.mobile}</div>
                     </div>
                   </div>
@@ -367,35 +438,48 @@ export default function AdminRecordsPage() {
                     </div>
                   )}
                   <div className="mb-4">
-                    <label className="block text-xs font-bold text-gray-600 mb-1.5">Diagnosis / Problem *</label>
+                    <label className="block text-xs font-bold text-gray-600 mb-1.5">Complaint</label>
+                    <textarea value={visitForm.complaint}
+                      onChange={e => setVisitForm(p => ({ ...p, complaint: e.target.value }))}
+                      placeholder="What is the owner's complaint?" rows={2}
+                      className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:border-amber-400 transition-colors resize-vertical"/>
+                  </div>
+                  <div className="mb-4">
+                    <label className="block text-xs font-bold text-gray-600 mb-1.5">Clinical Signs</label>
+                    <textarea value={visitForm.clinical_signs}
+                      onChange={e => setVisitForm(p => ({ ...p, clinical_signs: e.target.value }))}
+                      placeholder="Clinical signs observed during examination…" rows={2}
+                      className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:border-amber-400 transition-colors resize-vertical"/>
+                  </div>
+                  <div className="mb-4">
+                    <label className="block text-xs font-bold text-gray-600 mb-1.5">Diagnosis *</label>
                     <textarea value={visitForm.diagnosis}
                       onChange={e => setVisitForm(p => ({ ...p, diagnosis: e.target.value }))}
-                      placeholder="What was the problem or diagnosis?" rows={2}
+                      placeholder="Diagnosis / Problem identified…" rows={2}
                       className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:border-amber-400 transition-colors resize-vertical"/>
                   </div>
                   <div className="mb-4">
-                    <label className="block text-xs font-bold text-gray-600 mb-1.5">Treatment Given *</label>
+                    <label className="block text-xs font-bold text-gray-600 mb-1.5">Treatments *</label>
                     <textarea value={visitForm.treatment}
                       onChange={e => setVisitForm(p => ({ ...p, treatment: e.target.value }))}
-                      placeholder="Treatment administered…" rows={2}
+                      placeholder="Treatments administered…" rows={2}
                       className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:border-amber-400 transition-colors resize-vertical"/>
                   </div>
                   <div className="mb-4">
-                    <label className="block text-xs font-bold text-gray-600 mb-1.5">Medicines Prescribed</label>
+                    <label className="block text-xs font-bold text-gray-600 mb-1.5">Medications Prescribed</label>
                     <textarea value={visitForm.medicines}
                       onChange={e => setVisitForm(p => ({ ...p, medicines: e.target.value }))}
-                      placeholder="Medicines + dosage + duration…" rows={2}
+                      placeholder="Medications + dosage + duration…" rows={2}
                       className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:border-amber-400 transition-colors resize-vertical"/>
                   </div>
                   <div className="mb-5">
                     <label className="block text-xs font-bold text-gray-600 mb-1.5">
                       WhatsApp Reminder Message{' '}
-                      <span className="font-normal text-gray-400">(doctor writes the exact message to be sent)</span>
+                      <span className="font-normal text-gray-400">(edit as needed)</span>
                     </label>
                     <textarea value={visitForm.reminder_message}
                       onChange={e => setVisitForm(p => ({ ...p, reminder_message: e.target.value }))}
-                      placeholder={`e.g. Dear ${selected.owner_name}, ${selected.pet_name} is due for a vaccine booster. Please bring them in this week. - Paws Care & Heal, 094838 52691`}
-                      rows={3}
+                      placeholder="Type reminder message…" rows={3}
                       className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:border-amber-400 transition-colors resize-vertical"/>
                     <div className="mt-2 px-3 py-2 rounded-xl text-xs font-semibold" style={{ background:'#E0F7FA', color:'#0891B2' }}>
                       📅 Reminder will be set for: <strong>{calcReminderDate(visitForm)}</strong>
@@ -445,19 +529,31 @@ export default function AdminRecordsPage() {
                     </div>
                   )}
                   <div className="mb-4">
-                    <label className="block text-xs font-bold text-gray-600 mb-1.5">Diagnosis / Problem *</label>
+                    <label className="block text-xs font-bold text-gray-600 mb-1.5">Complaint</label>
+                    <textarea value={editVisitForm.complaint}
+                      onChange={e => setEditVisitForm(p => ({ ...p, complaint: e.target.value }))}
+                      rows={2} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:border-amber-400 transition-colors resize-vertical"/>
+                  </div>
+                  <div className="mb-4">
+                    <label className="block text-xs font-bold text-gray-600 mb-1.5">Clinical Signs</label>
+                    <textarea value={editVisitForm.clinical_signs}
+                      onChange={e => setEditVisitForm(p => ({ ...p, clinical_signs: e.target.value }))}
+                      rows={2} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:border-amber-400 transition-colors resize-vertical"/>
+                  </div>
+                  <div className="mb-4">
+                    <label className="block text-xs font-bold text-gray-600 mb-1.5">Diagnosis *</label>
                     <textarea value={editVisitForm.diagnosis}
                       onChange={e => setEditVisitForm(p => ({ ...p, diagnosis: e.target.value }))}
                       rows={2} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:border-amber-400 transition-colors resize-vertical"/>
                   </div>
                   <div className="mb-4">
-                    <label className="block text-xs font-bold text-gray-600 mb-1.5">Treatment Given *</label>
+                    <label className="block text-xs font-bold text-gray-600 mb-1.5">Treatments *</label>
                     <textarea value={editVisitForm.treatment}
                       onChange={e => setEditVisitForm(p => ({ ...p, treatment: e.target.value }))}
                       rows={2} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:border-amber-400 transition-colors resize-vertical"/>
                   </div>
                   <div className="mb-4">
-                    <label className="block text-xs font-bold text-gray-600 mb-1.5">Medicines Prescribed</label>
+                    <label className="block text-xs font-bold text-gray-600 mb-1.5">Medications Prescribed</label>
                     <textarea value={editVisitForm.medicines}
                       onChange={e => setEditVisitForm(p => ({ ...p, medicines: e.target.value }))}
                       rows={2} className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm font-medium focus:outline-none focus:border-amber-400 transition-colors resize-vertical"/>
@@ -465,7 +561,7 @@ export default function AdminRecordsPage() {
                   <div className="mb-5">
                     <label className="block text-xs font-bold text-gray-600 mb-1.5">
                       WhatsApp Reminder Message{' '}
-                      <span className="font-normal text-gray-400">(optional)</span>
+                      <span className="font-normal text-gray-400">(edit as needed)</span>
                     </label>
                     <textarea value={editVisitForm.reminder_message}
                       onChange={e => setEditVisitForm(p => ({ ...p, reminder_message: e.target.value }))}
@@ -501,28 +597,36 @@ export default function AdminRecordsPage() {
                   <div className="overflow-x-auto">
                     <table className="w-full">
                       <thead><tr className="bg-gray-50 text-xs font-bold text-gray-500 uppercase tracking-wide">
-                        <th className="px-4 py-3 text-left">Visit Date</th>
-                        <th className="px-4 py-3 text-left">Diagnosis / Problem</th>
-                        <th className="px-4 py-3 text-left">Treatment</th>
-                        <th className="px-4 py-3 text-left">Medicines</th>
-                        <th className="px-4 py-3 text-left">Next Reminder</th>
+                        <th className="px-4 py-3 text-left">Date</th>
+                        <th className="px-4 py-3 text-left">Complaint</th>
+                        <th className="px-4 py-3 text-left">Clinical Signs</th>
+                        <th className="px-4 py-3 text-left">Diagnosis</th>
+                        <th className="px-4 py-3 text-left">Treatments</th>
+                        <th className="px-4 py-3 text-left">Medications</th>
+                        <th className="px-4 py-3 text-left">Reminder</th>
                         <th className="px-4 py-3 text-left">Actions</th>
                       </tr></thead>
                       <tbody>
                         {selected.visits.map((v, i) => {
                           const isReminded = v.reminder_sent
                           const waMsg = v.reminder_message ||
-                            `Hi ${selected.owner_name}, ${selected.pet_name} is due for a visit. Please call 094838 52691 to book a slot. - Paws Care & Heal`
+                            `Dear ${selected.owner_name}, your ${selected.pet_name} visit to clinic is due for vaccinations/deworming/tick treatments/treatment follow up Visit Dhrisha's Pet Planet - Bhagya nagar 2nd cross (9.30am to 6.30pm) & Paws Care and heal pet clinic - Hanuman nagar (6.45pm to 8.30pm - Sunday Holiday)`
                           return (
                             <tr key={v.id} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
                               <td className="px-4 py-3.5 text-sm font-semibold whitespace-nowrap">{v.visit_date}</td>
-                              <td className="px-4 py-3.5 text-sm max-w-[180px]">
-                                <div className="line-clamp-2 leading-snug">{v.diagnosis}</div>
-                              </td>
-                              <td className="px-4 py-3.5 text-sm max-w-[180px]">
-                                <div className="line-clamp-2 leading-snug text-gray-600">{v.treatment}</div>
+                              <td className="px-4 py-3.5 text-sm max-w-[140px]">
+                                <div className="line-clamp-2 leading-snug text-gray-600">{v.complaint || '—'}</div>
                               </td>
                               <td className="px-4 py-3.5 text-sm max-w-[140px]">
+                                <div className="line-clamp-2 leading-snug text-gray-600">{v.clinical_signs || '—'}</div>
+                              </td>
+                              <td className="px-4 py-3.5 text-sm max-w-[140px]">
+                                <div className="line-clamp-2 leading-snug">{v.diagnosis}</div>
+                              </td>
+                              <td className="px-4 py-3.5 text-sm max-w-[140px]">
+                                <div className="line-clamp-2 leading-snug text-gray-600">{v.treatment}</div>
+                              </td>
+                              <td className="px-4 py-3.5 text-sm max-w-[120px]">
                                 <div className="line-clamp-2 leading-snug text-gray-500">{v.medicines || '—'}</div>
                               </td>
                               <td className="px-4 py-3.5 whitespace-nowrap">
@@ -568,16 +672,7 @@ export default function AdminRecordsPage() {
                 )}
               </div>
             </div>
-          ) : (
-            !showAddPet && !loadingSearch && results.length === 0 && (
-              <div className="text-center py-16 text-gray-400">
-                <div className="text-5xl mb-4">🐾</div>
-                <div className="font-bold text-gray-500 text-lg mb-2">Search to find pet records</div>
-                <div className="text-sm">Type a pet name, owner name, or mobile number above</div>
-              </div>
-            )
-          )}
-          {loadingSearch && <div className="text-center py-10 text-amber-500 font-bold">Searching…</div>}
+          ) : null}
         </div>
       )}
     </div>
