@@ -223,6 +223,24 @@ export default function AdminRecordsPage() {
     loadAllPets()
   }
 
+  const getDefaultReminderMsg = () => {
+    if (!selected) return DEFAULT_REMINDER_MSG
+    return DEFAULT_REMINDER_MSG
+      .replace('[Pet Parent]', selected.owner_name)
+      .replace('[pet name]', selected.pet_name)
+  }
+
+  const openAddVisitForm = () => {
+    setEditingVisit(null)
+    setShowAddVisit(!showAddVisit)
+    if (!showAddVisit) {
+      setVisitForm({
+        ...EMPTY_VISIT_FORM,
+        reminder_message: getDefaultReminderMsg(),
+      })
+    }
+  }
+
   return (
     <div className="overflow-hidden">
       {visitSaved && <div className="bg-green-50 border border-green-200 rounded-xl px-4 py-3 mb-4 text-green-700 font-semibold text-sm">✅ Visit record saved successfully!</div>}
@@ -327,42 +345,40 @@ export default function AdminRecordsPage() {
 
       {/* Pet grid + detail panel */}
       {!showAddPet && !showEditPet && (
-        <div className={`grid gap-5 ${selected ? 'lg:grid-cols-[320px_1fr]' : ''}`}>
-          {/* Pet cards grid */}
-          {!selected && (
-            <>
-              {loadingSearch ? (
-                <div className="text-center py-10 text-amber-500 font-bold">Loading pets…</div>
-              ) : results.length === 0 ? (
-                <div className="text-center py-16 text-gray-400">
-                  <div className="text-5xl mb-4">🐾</div>
-                  <div className="font-bold text-gray-500 text-lg mb-2">No pet records found</div>
-                  <div className="text-sm">Add a new pet record or try a different search</div>
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-                  {results.map(pet => (
-                    <div key={pet.id} onClick={() => loadPetDetail(pet)}
-                      className="rounded-2xl overflow-hidden cursor-pointer transition-all hover:-translate-y-1 hover:shadow-lg border border-gray-100 bg-white"
-                      style={{ boxShadow: '0 1px 6px rgba(0,0,0,.06)' }}>
-                      <div className="h-24 flex items-center justify-center text-5xl"
-                        style={{ background: pet.gender === 'Female' ? '#FCE7F3' : '#DBEAFE' }}>
-                        {pet.pet_type === 'Cat' ? '🐈' : pet.pet_type === 'Dog' ? '🐕' : '🐾'}
-                      </div>
-                      <div className="p-3">
-                        <div className="font-extrabold text-sm truncate">{pet.pet_name}</div>
-                        <div className="text-[11px] text-gray-500 truncate">
-                          {pet.breed || pet.pet_type}{pet.gender ? ` · ${pet.gender}` : ''}
-                        </div>
-                        <div className="text-[11px] text-gray-400 truncate">{pet.owner_name}</div>
-                        <div className="text-[11px] text-gray-400 truncate">{pet.mobile}</div>
-                      </div>
+        <div className={`grid gap-5 ${selected ? 'lg:grid-cols-[280px_1fr]' : ''}`}>
+          {/* Pet cards sidebar — always visible on desktop, hidden on mobile when detail open */}
+          <div className={`${selected ? 'hidden lg:block' : 'block'}`}>
+            {loadingSearch ? (
+              <div className="text-center py-10 text-amber-500 font-bold">Loading pets…</div>
+            ) : results.length === 0 ? (
+              <div className="text-center py-16 text-gray-400">
+                <div className="text-5xl mb-4">🐾</div>
+                <div className="font-bold text-gray-500 text-lg mb-2">No pet records found</div>
+                <div className="text-sm">Add a new pet record or try a different search</div>
+              </div>
+            ) : (
+              <div className={`grid gap-2 ${selected ? 'grid-cols-2' : 'grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5'} ${selected ? '' : ''}`}>
+                {results.map(pet => (
+                  <div key={pet.id} onClick={() => loadPetDetail(pet)}
+                    className={`rounded-2xl overflow-hidden cursor-pointer transition-all hover:-translate-y-1 border border-gray-100 bg-white
+                      ${selected?.id === pet.id ? 'ring-2 ring-amber-500' : ''}`}
+                    style={{ boxShadow: '0 1px 6px rgba(0,0,0,.06)' }}>
+                    <div className={`flex items-center justify-center ${selected ? 'h-16 text-3xl' : 'h-24 text-5xl'}`}
+                      style={{ background: pet.gender === 'Female' ? '#FCE7F3' : '#DBEAFE' }}>
+                      {pet.pet_type === 'Cat' ? '🐈' : pet.pet_type === 'Dog' ? '🐕' : '🐾'}
                     </div>
-                  ))}
-                </div>
-              )}
-            </>
-          )}
+                    <div className="p-2.5">
+                      <div className="font-extrabold text-sm truncate">{pet.pet_name}</div>
+                      <div className="text-[11px] text-gray-500 truncate">
+                        {pet.breed || pet.pet_type}{pet.gender ? ` · ${pet.gender}` : ''}
+                      </div>
+                      <div className="text-[11px] text-gray-400 truncate">{pet.owner_name}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
 
           {/* Detail panel */}
           {selected ? (
@@ -400,7 +416,7 @@ export default function AdminRecordsPage() {
                       className="flex items-center gap-1.5 font-extrabold text-sm px-4 py-2.5 rounded-full border-2 border-red-200 text-red-600 hover:bg-red-50 transition-colors">
                       <Trash2 size={14}/> Delete
                     </button>
-                    <button onClick={() => { setShowAddVisit(!showAddVisit); setEditingVisit(null) }}
+                    <button onClick={openAddVisitForm}
                       className="flex items-center gap-2 text-white font-extrabold text-sm px-5 py-2.5 rounded-full"
                       style={{ background: showAddVisit ? '#6B7280' : '#F59E0B' }}>
                       {showAddVisit ? '✕ Cancel' : '+ Add Visit'}
