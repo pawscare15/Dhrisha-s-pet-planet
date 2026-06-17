@@ -218,6 +218,47 @@ export default function AdminRecordsPage() {
     } else alert('Error deleting visit: ' + error.message)
   }
 
+  const exportToCsv = async () => {
+    const { data: allPets } = await supabase.from('pets').select('*').order('pet_name')
+    if (!allPets || allPets.length === 0) { alert('No pet records to export'); return }
+
+    const petIds = allPets.map(p => p.id).filter(Boolean)
+    const { data: allVisits } = await supabase.from('visits')
+      .select('*').in('pet_id', petIds).order('visit_date', { ascending: false })
+
+    const visitsMap: Record<string, any[]> = {}
+    for (const v of allVisits || []) {
+      if (!visitsMap[v.pet_id]) visitsMap[v.pet_id] = []
+      visitsMap[v.pet_id].push(v)
+    }
+
+    const rows: string[][] = [['Pet Name','Pet Type','Breed','Gender','Age','Owner Name','Mobile',
+      'Visit Date','Complaint','Clinical Signs','Diagnosis','Treatments','Medications',
+      'Next Reminder Date','Reminder Sent','Reminder Message']]
+
+    for (const pet of allPets) {
+      const visits = visitsMap[pet.id!] || []
+      if (visits.length === 0) {
+        rows.push([pet.pet_name, pet.pet_type, pet.breed||'', pet.gender||'', pet.pet_age||'', pet.owner_name, pet.mobile,
+          '','','','','','','','',''])
+      }
+      for (const v of visits) {
+        rows.push([pet.pet_name, pet.pet_type, pet.breed||'', pet.gender||'', pet.pet_age||'', pet.owner_name, pet.mobile,
+          v.visit_date||'', v.complaint||'', v.clinical_signs||'', v.diagnosis, v.treatment, v.medicines||'',
+          v.next_reminder_date||'', v.reminder_sent ? 'Yes' : 'No', v.reminder_message||''])
+      }
+    }
+
+    const csv = rows.map(r => r.map(c => `"${(c||'').replace(/"/g,'""')}"`).join(',')).join('\n')
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `pawscare-backup-${new Date().toISOString().split('T')[0]}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
+
   const backToGrid = () => {
     setSelected(null)
     loadAllPets()
@@ -264,6 +305,11 @@ export default function AdminRecordsPage() {
           className="flex items-center gap-2 text-white font-extrabold text-sm px-4 py-3 rounded-xl transition-all hover:-translate-y-0.5"
           style={{ background: '#111827' }}>
           <Plus size={16}/> New Pet
+        </button>
+        <button onClick={exportToCsv}
+          className="flex items-center gap-2 text-white font-extrabold text-sm px-4 py-3 rounded-xl transition-all hover:-translate-y-0.5"
+          style={{ background: '#10B981' }}>
+          📥 Export CSV
         </button>
       </div>
 

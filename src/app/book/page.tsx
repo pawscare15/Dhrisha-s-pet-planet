@@ -83,7 +83,7 @@ export default function BookPage() {
     </div>
   )
 
-  const tomorrow = new Date(); tomorrow.setDate(tomorrow.getDate()+1)
+  const today = new Date()
   const maxDate = new Date(); maxDate.setDate(maxDate.getDate()+30)
 
   return (
@@ -160,7 +160,7 @@ export default function BookPage() {
             <div>
               <label className="block text-xs font-bold text-gray-600 mb-1.5">Preferred Date</label>
               <input type="date" value={form.preferred_date} onChange={e=>set('preferred_date',e.target.value)}
-                min={tomorrow.toISOString().split('T')[0]} max={maxDate.toISOString().split('T')[0]}
+                min={today.toISOString().split('T')[0]} max={maxDate.toISOString().split('T')[0]}
                 className={inp} style={{ borderColor:'#E5E7EB' }}
                 onFocus={e=>(e.target.style.borderColor='#F59E0B')} onBlur={e=>(e.target.style.borderColor='#E5E7EB')}/>
             </div>
