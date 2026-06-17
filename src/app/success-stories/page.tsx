@@ -75,20 +75,19 @@ const STORIES = [
 ]
 
 export default function SuccessStoriesPage() {
-  const [dbStories, setDbStories] = useState<Story[]>([])
-  const [loading, setLoading] = useState(true)
+  const [dbStories, setDbStories] = useState<Story[] | null>(null)
 
   useEffect(() => {
-    supabase.from('stories').select('*').order('created_at', { ascending: false }).then(({ data }) => {
-      setDbStories(data || [])
-      setLoading(false)
-    })
+    supabase.from('stories').select('*').order('created_at', { ascending: false })
+      .then(({ data, error }) => {
+        if (error) console.error('Stories fetch error:', error)
+        setDbStories(data || [])
+      })
   }, [])
 
   useReveal()
   return (
     <div className="min-h-screen bg-white">
-      {/* Header */}
       <div className="text-center py-16 px-8 bg-white">
         <div className="inline-flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-full mb-4" style={{ background:'#FEF3C7', color:'#D97706' }}>🌟 Real Reviews from Google</div>
         <h1 className="font-black text-4xl text-gray-900 mb-3">Success Stories</h1>
@@ -97,9 +96,8 @@ export default function SuccessStoriesPage() {
         </p>
       </div>
 
-      {/* Database success stories */}
-      {!loading && dbStories.length > 0 && (
-        <div className="px-10 pb-10 max-sm:px-5">
+      {dbStories !== null && dbStories.length > 0 && (
+        <div className="px-10 pb-14 max-sm:px-5">
           <div className="max-w-6xl mx-auto">
             <h2 className="font-black text-2xl mb-6 reveal">🐾 Our Recent Success Stories</h2>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -111,7 +109,7 @@ export default function SuccessStoriesPage() {
                     {s.image_url ? (
                       <img src={s.image_url} alt={s.pet_name} className="w-full h-full object-cover"/>
                     ) : (
-                      <span>{s.pet_type === 'Cat' ? '🐈' : s.pet_type === 'Dog' ? '🐕' : '🐾'}</span>
+                      <span className="drop-shadow-lg">{s.pet_type === 'Cat' ? '🐈' : s.pet_type === 'Dog' ? '🐕' : '🐾'}</span>
                     )}
                     {s.is_featured && (
                       <span className="absolute top-3 right-3 text-xs font-bold px-2.5 py-1 rounded-full text-white"
@@ -145,7 +143,6 @@ export default function SuccessStoriesPage() {
         </div>
       )}
 
-      {/* Client mosaic grid — Real clients */}
       <div className="px-10 pb-10 max-sm:px-5">
         <div className="max-w-6xl mx-auto reveal grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
           {[
@@ -170,7 +167,6 @@ export default function SuccessStoriesPage() {
         </div>
       </div>
 
-      {/* Detailed review cards */}
       <div className="px-10 pb-16 max-sm:px-5">
         <div className="max-w-6xl mx-auto">
           <h2 className="font-black text-3xl mb-8 reveal">What Pet Parents Say</h2>
@@ -200,7 +196,6 @@ export default function SuccessStoriesPage() {
         </div>
       </div>
 
-      {/* CTA */}
       <div className="text-center py-12 px-8" style={{ background:'#F59E0B' }}>
         <h2 className="font-black text-2xl text-gray-900 mb-2">Your pet could be our next success story!</h2>
         <p className="text-gray-900/70 mb-6 text-[15px]">Book an appointment today and give your pet the care they deserve.</p>

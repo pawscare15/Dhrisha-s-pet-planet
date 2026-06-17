@@ -23,6 +23,12 @@ ALTER TABLE visits ADD COLUMN IF NOT EXISTS clinical_signs TEXT DEFAULT '';
 -- Add image_url to stories (FIXES the "column not found" error)
 ALTER TABLE stories ADD COLUMN IF NOT EXISTS image_url TEXT DEFAULT '';
 
+-- Fix: RLS on stories blocks public read — ensure public SELECT policy exists
+DROP POLICY IF EXISTS "Public read stories"  ON stories;
+DROP POLICY IF EXISTS "Admin manage stories" ON stories;
+CREATE POLICY "Public read stories"  ON stories FOR SELECT USING (true);
+CREATE POLICY "Admin manage stories" ON stories FOR ALL   USING (true) WITH CHECK (true);
+
 
 -- ── STEP 2: Fix views (views hold NO data - safe to drop/recreate) ─
 
