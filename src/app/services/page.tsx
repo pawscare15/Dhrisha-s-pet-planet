@@ -34,7 +34,7 @@ export default function ServicesPage() {
         <div className="inline-flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-full mb-4" style={{ background: '#F59E0B', color: '#fff' }}>🩺 Expert Veterinary Care</div>
         <h1 className="font-black text-4xl text-gray-900 mb-3">Our Services</h1>
         <p className="text-gray-500 max-w-xl mx-auto text-[15px] leading-[1.7]">
-          Comprehensive veterinary care at Paws Care &amp; Heal — dedicated to keeping your beloved pets healthy and happy in Belagavi.
+          Comprehensive veterinary care at Dhrisha&rsquo;s Pet Planet &amp; Paws Care &amp; Heal — dedicated to keeping your beloved pets healthy and happy in Belagavi.
         </p>
       </div>
 

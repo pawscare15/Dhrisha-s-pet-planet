@@ -6,10 +6,10 @@ import ChatBot from '@/components/chatbot/ChatBot'
 
 // UPDATED WITH REAL GOOGLE DATA
 export const metadata: Metadata = {
-  title: 'Paws Care and Heal Pet Clinic | Best Vet Clinic in Belagavi | 4.9★ Google',
+  title: "Dhrisha's Pet Planet | Best Vet Clinic in Belagavi | 4.9★ Google",
   description:
-    'Paws Care and Heal Pet Clinic — Belagavi\'s #1 rated veterinary clinic (4.9★, 223+ reviews). Led by Dr. Mahadev Mullati. Expert care for dogs, cats & small animals. Near Ganapati Temple, Double Road, Hindalga. Call 094838 52691.',
-  keywords: 'pet clinic belagavi, veterinary belgaum, dog cat doctor belagavi, paws care heal, Dr Mahadev Mullati, vet near hindalga, best vet belagavi',
+    "Dhrisha's Pet Planet & Paws Care & Heal — Belagavi's #1 rated veterinary clinics (4.9★, 223+ reviews). Expert care for dogs, cats & small animals. #3270, Hari Nikunj, 2nd Cross, Bhagya Nagar, Belagavi 590 006. Call 094838 52691.",
+  keywords: 'pet clinic belagavi, veterinary belgaum, dog cat doctor belagavi, dhrisha pet planet, paws care heal, bhagya nagar belagavi, best vet belagavi',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

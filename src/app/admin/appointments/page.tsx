@@ -82,11 +82,11 @@ export default function AdminAppointmentsPage() {
             <div><label className="block text-xs font-bold text-gray-600 mb-1.5">Time</label>
               <select value={form.preferred_time} onChange={e=>setForm(p=>({...p,preferred_time:e.target.value}))} className={inp}>
                 <option value="">— Select —</option>
-                <optgroup label="☀️ Morning (10:30 AM – 2:00 PM)">
-                  {['10:30 AM','11:00 AM','11:30 AM','12:00 PM','12:30 PM','1:00 PM','1:30 PM','2:00 PM'].map(t=><option key={t}>{t}</option>)}
+                <optgroup label="☀️ Day (9:30 AM – 6:30 PM) · Dhrisha's Pet Planet">
+                  {['9:30 AM','10:00 AM','10:30 AM','11:00 AM','11:30 AM','12:00 PM','12:30 PM','1:00 PM','1:30 PM','2:00 PM','2:30 PM','3:00 PM','3:30 PM','4:00 PM','4:30 PM','5:00 PM','5:30 PM','6:00 PM'].map(t=><option key={t}>{t}</option>)}
                 </optgroup>
-                <optgroup label="🌙 Evening (5:30 PM – 8:30 PM)">
-                  {['5:30 PM','6:00 PM','6:30 PM','7:00 PM','7:30 PM','8:00 PM','8:30 PM'].map(t=><option key={t}>{t}</option>)}
+                <optgroup label="🌙 Evening (6:30 PM – 8:30 PM) · Paws Care &amp; Heal">
+                  {['6:30 PM','7:00 PM','7:30 PM','8:00 PM'].map(t=><option key={t}>{t}</option>)}
                 </optgroup>
               </select></div>
           </div>
@@ -162,7 +162,7 @@ export default function AdminAppointmentsPage() {
                             Done
                           </button>
                         )}
-                        <a href={`https://wa.me/91${a.mobile}?text=${encodeURIComponent(`Hi ${a.owner_name}! Your appointment for ${a.pet_name} on ${selectedDate} at ${a.preferred_time || 'your slot'} is confirmed at Paws Care & Heal. Please arrive 5 min early. - 094838 52691`)}`}
+                        <a href={`https://wa.me/91${a.mobile}?text=${encodeURIComponent(`Hi ${a.owner_name}! Your appointment for ${a.pet_name} on ${selectedDate} at ${a.preferred_time || 'your slot'} is confirmed at Dhrisha's Pet Planet. Please arrive 5 min early. - 094838 52691`)}`}
                           target="_blank" rel="noreferrer"
                           className="text-xs font-bold px-3 py-1.5 rounded-full text-white transition-all hover:opacity-90"
                           style={{ background:'#25D366' }}>

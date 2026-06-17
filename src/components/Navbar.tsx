@@ -25,7 +25,7 @@ export default function Navbar() {
           <div className="w-8 md:w-9 h-8 md:h-9 rounded-full flex items-center justify-center text-base md:text-lg"
                style={{ background: '#F59E0B' }}>🐾</div>
           <span className="font-black text-[15px] md:text-[17px] text-gray-900">
-            Paws Care <span style={{ color: '#F59E0B' }}>&amp; Heal</span>
+            Dhrisha&rsquo;s <span style={{ color: '#F59E0B' }}>Pet Planet</span>
           </span>
         </Link>
 
@@ -52,10 +52,10 @@ export default function Navbar() {
         {/* Right info */}
         {/* UPDATED WITH REAL GOOGLE DATA */}
         <div className="hidden lg:block text-right text-[11px] text-gray-500 leading-[1.6] shrink-0">
-          <div className="font-bold text-[13px] text-gray-900">Paws Care &amp; Heal, Belagavi</div>
+          <div className="font-bold text-[13px] text-gray-900">Dhrisha&rsquo;s Pet Planet, Belagavi</div>
           <div>094838 52691</div>
-          <div>☀️ 10:30 AM – 2:00 PM &nbsp;·&nbsp; Mon–Sat</div>
-          <div>🌙 5:30 PM – 8:30 PM</div>
+          <div>☀️ 9:30 AM – 6:30 PM &nbsp;·&nbsp; Bhagya Nagar</div>
+          <div>🌙 6:30 PM – 8:30 PM &nbsp;·&nbsp; Hanuman Nagar</div>
         </div>
 
         {/* Mobile burger */}

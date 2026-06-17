@@ -50,7 +50,7 @@ export async function GET(req: NextRequest) {
 
   for (const r of reminders || []) {
     const msg = r.reminder_message || 
-      `🐾 Paws Care & Heal Reminder: ${r.pets.pet_name} is due for a visit on ${r.next_reminder_date}. Call 094838 52691 to book.`
+      `🐾 Dhrisha's Pet Planet Reminder: ${r.pets.pet_name} is due for a visit on ${r.next_reminder_date}. Call 094838 52691 to book.`
     
     try {
       const res = await fetch(

@@ -56,7 +56,7 @@ export default function HomePage() {
           </h1>
           {/* UPDATED WITH REAL GOOGLE DATA */}
           <p className="text-gray-500 text-sm md:text-base leading-[1.75] mb-2 md:mb-3 max-w-[400px]">
-            Paws Care and Heal Pet Clinic works for Animals mainly Dogs and Cats - Health and welfare through proper treatment and advice to pet parents.
+            Dhrisha&rsquo;s Pet Planet &amp; Paws Care &amp; Heal work for Animals mainly Dogs and Cats - Health and welfare through proper treatment and advice to pet parents.
           </p>
           <div className="inline-flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-full px-3 md:px-4 py-1.5 md:py-2 mb-4 md:mb-6 w-fit">
             <div className="flex gap-0.5 text-amber-400 text-sm">{'★★★★★'.split('').map((s,i)=><span key={i}>{s}</span>)}</div>
@@ -95,7 +95,7 @@ export default function HomePage() {
         <div className="relative bg-amber-50 max-sm:h-[360px] md:h-auto flex items-center justify-center">
           <img
             src="/images/hero-cat.png"
-            alt="Happy pet at Paws Care and Heal"
+            alt="Happy pet at Dhrisha's Pet Planet"
             className="max-sm:w-auto max-sm:h-full max-sm:object-contain md:w-full md:h-full md:absolute md:inset-0 md:object-cover"
             style={{ objectPosition: 'center top' }}
           />
@@ -109,9 +109,8 @@ export default function HomePage() {
           <div className="relative">
             <div className="relative rounded-2xl overflow-hidden h-44 md:h-56 mb-4 md:mb-5">
               <img src="/images/clinic_photo.webp"
-                alt="Paws Care and Heal Pet Clinic" className="w-full h-full object-cover" />
-              {/* UPDATED WITH REAL GOOGLE DATA */}
-              <a href="https://www.google.com/maps/place/Paws+Care+and+Heal+Pet+Clinic/@15.8703859,74.4894242,17z" target="_blank" rel="noreferrer"
+                alt="Dhrisha's Pet Planet" className="w-full h-full object-cover" />
+              <a href="https://www.google.com/maps/place/Dhrishas+Pet+Planet/@15.8703859,74.4894242,17z" target="_blank" rel="noreferrer"
                 className="absolute bottom-3 left-3 md:bottom-4 md:left-4 flex items-center gap-1.5 font-bold text-xs md:text-sm text-white px-3 py-2 md:px-5 md:py-2.5 rounded-full transition-all"
                 style={{ background: '#F59E0B', boxShadow: '0 4px 14px rgba(245,158,11,.4)' }}>
                 📍 Show on map
@@ -120,7 +119,7 @@ export default function HomePage() {
             <div style={{ position:'absolute',bottom:0,right:0,width:70,height:70,background:'#F59E0B',borderRadius:'50% 0 0 0' }} className="hidden md:block" />
             {/* UPDATED WITH REAL GOOGLE DATA */}
             <p className="text-white/70 text-sm leading-[1.8] max-sm:text-xs max-sm:leading-[1.6]">
-              Paws Care and Heal Pet Clinic works for Animals mainly Dogs and Cats — Health and welfare through proper treatment and advice to pet parents. Located near Ganapati Temple, Double Road, Hindalga, Belagavi.
+              Dhrisha&rsquo;s Pet Planet &amp; Paws Care &amp; Heal work for Animals mainly Dogs and Cats &mdash; Health and welfare through proper treatment and advice to pet parents. Two locations: Bhagya Nagar (9:30 AM&ndash;6:30 PM) &amp; Hanuman Nagar (6:30 PM&ndash;8:30 PM), Belagavi.
             </p>
           </div>
           {/* Right */}
@@ -391,7 +390,7 @@ function AppointmentForm() {
         const agree = fd.get('agree')
         if (!name || !phone) { alert('Please fill in your name and phone number.'); return }
         if (!agree) { alert('Please accept the terms to continue.'); return }
-        const msg = `Hi! I'd like to book an appointment at Paws Care & Heal. My name is ${name}, phone: ${phone}. Please confirm availability.`
+        const msg = `Hi! I'd like to book an appointment at Dhrisha's Pet Planet. My name is ${name}, phone: ${phone}. Please confirm availability.`
         window.open(`https://wa.me/919483852691?text=${encodeURIComponent(msg)}`, '_blank')
       }}>
         <div className="flex flex-col gap-2 md:gap-3">

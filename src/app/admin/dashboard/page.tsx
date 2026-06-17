@@ -10,29 +10,36 @@ export default function AdminDashboard() {
   const [recentAppts, setRecentAppts] = useState<any[]>([])
   const [dueReminders, setDueReminders] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
   useEffect(() => {
     loadData()
   }, [])
 
   const loadData = async () => {
-    const today = new Date().toISOString().split('T')[0]
-    const in3 = new Date(Date.now() + 3 * 86400000).toISOString().split('T')[0]
+    try {
+      const today = new Date().toISOString().split('T')[0]
+      const in3 = new Date(Date.now() + 3 * 86400000).toISOString().split('T')[0]
 
-    const [apptRes, petRes, reminderRes] = await Promise.all([
-      supabase.from('appointments').select('*').eq('preferred_date', today).order('preferred_time'),
-      supabase.from('pets').select('id', { count: 'exact', head: true }),
-      supabase.from('visits').select('*, pets(*)').gte('next_reminder_date', today).lte('next_reminder_date', in3).eq('reminder_sent', false).order('next_reminder_date'),
-    ])
+      const [apptRes, petRes, reminderRes] = await Promise.all([
+        supabase.from('appointments').select('*').eq('preferred_date', today).order('preferred_time'),
+        supabase.from('pets').select('id', { count: 'exact', head: true }),
+        supabase.from('visits').select('*, pets(*)').gte('next_reminder_date', today).lte('next_reminder_date', in3).eq('reminder_sent', false).order('next_reminder_date'),
+      ])
 
-    setRecentAppts(apptRes.data || [])
-    setDueReminders(reminderRes.data || [])
-    setStats({
-      appointments: apptRes.data?.length || 0,
-      pets: petRes.count || 0,
-      reminders: reminderRes.data?.length || 0,
-    })
-    setLoading(false)
+      setRecentAppts(apptRes?.data || [])
+      setDueReminders(reminderRes?.data || [])
+      setStats({
+        appointments: apptRes?.data?.length || 0,
+        pets: petRes?.count || 0,
+        reminders: reminderRes?.data?.length || 0,
+      })
+    } catch (err) {
+      console.error('Dashboard load error:', err)
+      setError('Failed to load dashboard data. Check console for details.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   const STAT_CARDS: StatCard[] = [
@@ -44,6 +51,12 @@ export default function AdminDashboard() {
 
   return (
     <div>
+      {error && (
+        <div className="bg-red-50 border border-red-200 rounded-xl px-4 py-3 mb-4 text-red-600 font-semibold text-sm">
+          ⚠️ {error}
+        </div>
+      )}
+
       {/* Stat cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {STAT_CARDS.map(s => (
@@ -117,20 +130,21 @@ export default function AdminDashboard() {
           ) : (
             <div className="divide-y divide-gray-50">
               {dueReminders.slice(0, 4).map(r => {
+                const pet = Array.isArray(r.pets) ? r.pets[0] : r.pets
                 const daysUntil = Math.ceil((new Date(r.next_reminder_date).getTime() - Date.now()) / 86400000)
                 const borderColor = daysUntil === 0 ? '#EF4444' : daysUntil === 1 ? '#F59E0B' : '#10B981'
                 return (
                   <div key={r.id} className="flex items-center justify-between px-5 py-3.5 gap-3"
                     style={{ borderLeft: `4px solid ${borderColor}` }}>
                     <div>
-                      <div className="font-bold text-sm">{r.pets?.pet_name || '—'}</div>
-                      <div className="text-xs text-gray-500">{r.pets?.owner_name} · 📱 {r.pets?.mobile}</div>
+                      <div className="font-bold text-sm">{pet?.pet_name || '—'}</div>
+                      <div className="text-xs text-gray-500">{pet?.owner_name} · 📱 {pet?.mobile}</div>
                       <div className="text-xs mt-0.5" style={{ color: borderColor }}>
                         {daysUntil === 0 ? '🔴 Due Today' : daysUntil === 1 ? '🟡 Due Tomorrow' : `🟢 Due in ${daysUntil} days`}
                       </div>
                     </div>
                     <a
-                      href={`https://wa.me/91${r.pets?.mobile}?text=${encodeURIComponent(r.reminder_message || `Hi ${r.pets?.owner_name}, ${r.pets?.pet_name} is due for a visit. Please call 094838 52691 to book. - Paws Care & Heal`)}`}
+                      href={`https://wa.me/91${pet?.mobile}?text=${encodeURIComponent(r.reminder_message || `Hi ${pet?.owner_name}, ${pet?.pet_name} is due for a visit. Please call 094838 52691 to book. - Dhrisha's Pet Planet`)}`}
                       target="_blank" rel="noreferrer"
                       className="text-xs font-bold px-3 py-2 rounded-full text-white whitespace-nowrap transition-all hover:opacity-90"
                       style={{ background: '#25D366' }}>

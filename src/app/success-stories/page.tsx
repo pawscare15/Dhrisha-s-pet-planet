@@ -81,7 +81,7 @@ export default function SuccessStoriesPage() {
         <div className="inline-flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-full mb-4" style={{ background:'#FEF3C7', color:'#D97706' }}>🌟 Real Reviews from Google</div>
         <h1 className="font-black text-4xl text-gray-900 mb-3">Success Stories</h1>
         <p className="text-gray-500 max-w-lg mx-auto text-[15px] leading-[1.7]">
-          Read what our happy pet parents have to say about their experience at Paws Care and Heal Pet Clinic, Belagavi.
+          Read what our happy pet parents have to say about their experience at Dhrisha&rsquo;s Pet Planet &amp; Paws Care &amp; Heal, Belagavi.
         </p>
       </div>
 

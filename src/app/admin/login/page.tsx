@@ -32,7 +32,7 @@ export default function AdminLoginPage() {
           <div className="w-12 md:w-16 h-12 md:h-16 rounded-xl md:rounded-2xl flex items-center justify-center text-2xl md:text-3xl mx-auto mb-3 md:mb-4"
             style={{ background: '#F59E0B' }}>🐾</div>
           <h1 className="font-black text-xl md:text-2xl text-gray-900">Admin Login</h1>
-          <p className="text-gray-500 text-sm mt-1">Paws Care &amp; Heal Pet Clinic</p>
+          <p className="text-gray-500 text-sm mt-1">Dhrisha's Pet Planet · Admin</p>
         </div>
 
         <div className="space-y-3 md:space-y-4">

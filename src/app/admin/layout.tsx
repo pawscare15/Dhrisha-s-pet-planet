@@ -34,7 +34,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         {/* Logo */}
         <div className="flex items-center gap-2 px-2 mb-6 md:mb-8">
           <div className="w-8 h-8 rounded-lg flex items-center justify-center text-base flex-shrink-0" style={{ background: '#F59E0B' }}>🐾</div>
-          <span className="text-white font-extrabold text-sm leading-tight">Paws Care<br/>Admin</span>
+          <span className="text-white font-extrabold text-sm leading-tight">Dhrisha's Pet<br/>Planet · Admin</span>
         </div>
         {/* Nav */}
         <nav className="flex-1 space-y-1">

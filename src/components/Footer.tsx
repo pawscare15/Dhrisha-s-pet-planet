@@ -16,9 +16,9 @@ export default function Footer() {
           </h2>
           <div className="flex items-center gap-2">
             <span className="text-2xl">🐾</span>
-            <span className="font-black text-xl text-gray-900">
-              Paws Care <span style={{ color: '#F59E0B' }}>&amp; Heal</span>
-            </span>
+          <span className="font-black text-xl text-gray-900">
+            Dhrisha&rsquo;s <span style={{ color: '#F59E0B' }}>Pet Planet</span>
+          </span>
           </div>
         </div>
 
@@ -63,12 +63,15 @@ export default function Footer() {
           <div>
             <div className="font-bold text-gray-900 text-sm mb-3">Contact</div>
             <div className="text-sm text-gray-500 space-y-1.5">
-              {/* UPDATED WITH REAL GOOGLE DATA */}
+              <div className="font-bold text-amber-600 text-xs uppercase tracking-wider mt-3">🏪 Dhrisha's Pet Planet</div>
+              <div>📍 #3270, Hari Nikunj, 2nd Cross</div>
+              <div>Bhagya Nagar, Belagavi 590 006</div>
+              <div>⏰ 9:30 AM – 6:30 PM · Mon–Sat</div>
+              <div className="font-bold text-amber-600 text-xs uppercase tracking-wider mt-3">🏪 Paws Care &amp; Heal</div>
               <div>📍 Near Ganapati Temple, Double Road</div>
-              <div>Beside Shambavi Clinic, Hindalga</div>
-              <div>Hanuman Nagar, Belagavi 590019</div>
+              <div>Beside Shambavi Clinic, Hanuman Nagar</div>
+              <div>⏰ 6:30 PM – 8:30 PM · Mon–Sat</div>
               <div><a href="tel:09483852691" className="hover:text-amber-500">📞 094838 52691</a></div>
-              <div>⏰ Mon–Sat: 10:30 AM – 2 PM, 5:30 – 8:30 PM</div>
               <div>🚫 Sunday: Closed</div>
             </div>
           </div>
@@ -98,7 +101,7 @@ export default function Footer() {
 
         {/* Copyright */}
         <div className="flex justify-between flex-wrap gap-3 mt-6 pt-5 border-t border-gray-100 text-xs text-gray-400">
-          <span>2026 © Paws Care and Heal Pet Clinic, Belagavi</span>
+          <span>2026 &copy; Dhrisha&rsquo;s Pet Planet &amp; Paws Care &amp; Heal, Belagavi</span>
           <div className="flex gap-5">
             <a href="#" className="hover:text-amber-500 transition-colors">Terms of use</a>
             <a href="#" className="hover:text-amber-500 transition-colors">Privacy policy</a>

@@ -5,7 +5,7 @@ import { X, Send } from 'lucide-react'
 type Msg = { id: number; text: string; isBot: boolean }
 
 const RULES = [
-  { k: ['hello','hi','hey','help','start'], r: `👋 Welcome to Paws Care & Heal!\n\nI can help with:\n• Symptoms & first aid\n• Vaccine schedules\n• Prices & packages\n• Clinic hours & location\n\nJust type your question! 🐾` },
+  { k: ['hello','hi','hey','help','start'], r: `👋 Welcome to Dhrisha's Pet Planet!\n\nI can help with:\n• Symptoms & first aid\n• Vaccine schedules\n• Prices & packages\n• Clinic hours & location\n\nJust type your question! 🐾` },
   { k: ['not eating','no appetite','refuse','wont eat'], r: `🍽️ Loss of Appetite\n\nPossible causes:\n• Stress or dental pain\n• Upset stomach or fever\n\n✅ Offer warm soft food. Keep water fresh.\n\n⚠️ See vet if not eating 48+ hrs.` },
   { k: ['vomit','throwing up','puke','nausea'], r: `🤢 Vomiting\n\n• Once = can be normal\n• Repeated = vet needed\n• Blood = EMERGENCY!\n\n✅ Withhold food 4-6 hrs, small water sips.` },
   { k: ['itch','scratch','skin','flea','tick','rash'], r: `🐛 Itching / Skin Issues\n\nCauses:\n• Fleas or ticks\n• Allergies (food/seasonal)\n• Fungal infection\n\n✅ Check for flea dirt in fur.\n\n💊 Medicated shampoo or antiparasitic needed.` },
@@ -15,8 +15,8 @@ const RULES = [
   { k: ['limp','leg','bone','fracture'], r: `🦴 Limping\n\n⚠️ NEVER give Paracetamol/Aspirin — TOXIC to pets!\n\n🚨 Needs vet exam urgently. Book now.` },
   { k: ['fever','temperature','hot'], r: `🌡️ Fever\n\nNormal: 38.3–39.2°C\n\n❌ NO human painkillers!\n\n🚨 Above 40°C = emergency. Come in today.` },
   { k: ['price','cost','fee','how much'], r: `💰 Price List\n\n• Checkup: ₹500\n• Vaccination: ₹300–₹1,200\n• Deworming: ₹250\n• Blood Test: ₹700\n• X-Ray: ₹900\n• Grooming: ₹400–₹900\n\n🎁 Monsoon Package ₹999` },
-  { k: ['hour','timing','open','when'], r: `⏰ Clinic Hours\n\n☀️ Morning: 10:30 AM – 2:00 PM\n🌙 Evening: 5:30 PM – 8:30 PM\n\n📅 Mon – Sat (Sunday: Emergency only)\n\n📍 Near Hindalga, Hanuman Nagar, Belagavi\n📞 094838 52691` },
-  { k: ['address','location','where'], r: `📍 Location\n\nGanapati Temple, double road,\nnear Hindalga, beside Shambavi Clinic,\nHanuman Nagar, Belagavi 590019\n\n📞 094838 52691` },
+  { k: ['hour','timing','open','when'], r: `⏰ Clinic Hours\n\n☀️ Dhrisha's Pet Planet (Bhagya Nagar): 9:30 AM – 6:30 PM\n🌙 Paws Care & Heal (Hanuman Nagar): 6:30 PM – 8:30 PM\n\n📅 Mon – Sat (Sunday: Closed)\n📞 094838 52691` },
+  { k: ['address','location','where'], r: `📍 Our Locations\n\n🏪 Dhrisha's Pet Planet\n#3270, Hari Nikunj, 2nd Cross\nBhagya Nagar, Belagavi 590006\n⏰ 9:30 AM – 6:30 PM\n\n🏪 Paws Care & Heal\nNear Ganapati Temple, Hindalga\nHanuman Nagar, Belagavi 590019\n⏰ 6:30 PM – 8:30 PM\n\n📞 094838 52691` },
   { k: ['puppy','kitten','new pet'], r: `🐣 New Pet Package — ₹799\n\n✅ First health exam\n✅ First vaccination\n✅ Deworming treatment\n✅ Diet & nutrition guide\n✅ Free 1-month follow-up call` },
 ]
 const DEFAULT = `🤔 Not sure about that.\n\nTry asking about:\n• Symptoms & first aid\n• Vaccinations\n• Prices & packages\n• Clinic hours\n\nOr call: 📞 094838 52691`
@@ -40,7 +40,7 @@ export default function ChatBot() {
 
   useEffect(() => {
     if (open && msgs.length === 0) {
-      setMsgs([{ id: 1, isBot: true, text: "👋 Hi! I'm PawBot!\n\nDescribe your pet's problem and I'll help, or ask about our services, prices, or clinic hours. 🐾" }])
+      setMsgs([{ id: 1, isBot: true, text: "👋 Hi! I'm PawBot from Dhrisha's Pet Planet!\n\nDescribe your pet's problem and I'll help, or ask about our services, prices, or clinic hours. 🐾" }])
     }
   }, [open])
 
@@ -69,7 +69,7 @@ export default function ChatBot() {
             <div className="w-9 h-9 rounded-full flex items-center justify-center text-lg bg-white/20">🐾</div>
             <div>
               <div className="font-extrabold text-white text-sm">PawBot</div>
-              <div className="text-xs text-white/80">Paws Care &amp; Heal · Always here</div>
+              <div className="text-xs text-white/80">Dhrisha's Pet Planet · Always here</div>
             </div>
             <button onClick={() => setOpen(false)} className="ml-auto text-white">
               <X size={18} />

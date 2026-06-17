@@ -26,7 +26,7 @@ function makeWaUrl(r: ReminderRow): string {
   const pet = getPet(r)
   const mobile = pet?.mobile?.replace(/\D/g, '') ?? ''   // strip any spaces/dashes
   const msg = r.reminder_message ||
-    `🐾 Dear ${pet?.owner_name ?? 'Pet Owner'}, ${pet?.pet_name ?? 'your pet'} is due for a visit. Please call 094838 52691 to book a slot. - Paws Care & Heal`
+    `🐾 Dear ${pet?.owner_name ?? 'Pet Owner'}, ${pet?.pet_name ?? 'your pet'} is due for a visit. Please call 094838 52691 to book a slot. - Dhrisha's Pet Planet`
   return `https://wa.me/91${mobile}?text=${encodeURIComponent(msg)}`
 }
 

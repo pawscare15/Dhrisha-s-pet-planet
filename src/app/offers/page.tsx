@@ -90,7 +90,7 @@ export default function OffersPage() {
 
               {/* CTA buttons */}
               <div className="flex flex-col sm:flex-row gap-3 justify-center items-center mb-12">
-                <a href="https://wa.me/919483852691?text=Hi! I'd like to know about any current special offers at Paws Care %26 Heal."
+                <a href="https://wa.me/919483852691?text=Hi! I'd like to know about any current special offers at Dhrisha's Pet Planet."
                   target="_blank" rel="noreferrer"
                   className="flex items-center gap-2 text-white font-extrabold px-7 py-3.5 rounded-full transition-all hover:opacity-90"
                   style={{ background: '#25D366' }}>
@@ -116,7 +116,7 @@ export default function OffersPage() {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5" style={{ animation: 'fadeInUp .5s ease both' }}>
               {offers.map(o => {
                 const featureList = o.features ? o.features.split('\n').filter(Boolean) : []
-                const waMsg = `Hi! I'm interested in the "${o.title}" offer at Paws Care & Heal Belagavi. Please share details.`
+                const waMsg = `Hi! I'm interested in the "${o.title}" offer at Dhrisha's Pet Planet Belagavi. Please share details.`
                 return (
                   <div key={o.id}
                     className="rounded-[20px] p-6 flex flex-col justify-between transition-transform hover:-translate-y-1"

@@ -2,16 +2,18 @@
 import { useState } from 'react'
 import Link from 'next/link'
 
-// Morning session: 10:30 AM – 2:00 PM | Evening session: 5:30 PM – 8:30 PM
-const MORNING_SLOTS = [
-  '10:30 AM', '11:00 AM', '11:30 AM',
+// Day session: 9:30 AM – 6:30 PM (Dhrisha's Pet Planet, Bhagya Nagar)
+// Evening session: 6:30 PM – 8:30 PM (Paws Care & Heal, Hanuman Nagar)
+const DAY_SLOTS = [
+  '9:30 AM', '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM',
   '12:00 PM', '12:30 PM', '1:00 PM', '1:30 PM', '2:00 PM',
+  '2:30 PM', '3:00 PM', '3:30 PM', '4:00 PM', '4:30 PM',
+  '5:00 PM', '5:30 PM', '6:00 PM',
 ]
 const EVENING_SLOTS = [
-  '5:30 PM', '6:00 PM', '6:30 PM',
-  '7:00 PM', '7:30 PM', '8:00 PM', '8:30 PM',
+  '6:30 PM', '7:00 PM', '7:30 PM', '8:00 PM',
 ]
-const TIME_SLOTS = [...MORNING_SLOTS, ...EVENING_SLOTS]
+const TIME_SLOTS = [...DAY_SLOTS, ...EVENING_SLOTS]
 
 export default function BookPage() {
   const [form, setForm] = useState({
@@ -46,7 +48,7 @@ export default function BookPage() {
     setSuccess(true)
   }
 
-  const waMsg = `Hi! I'd like to book an appointment for ${form.pet_name || 'my pet'} at Paws Care & Heal. My name is ${form.owner_name}, phone: ${form.mobile}. Preferred date: ${form.preferred_date || 'earliest available'} at ${form.preferred_time || 'any time'}. Problem: ${form.problem || 'General checkup'}. Please confirm!`
+  const waMsg = `Hi! I'd like to book an appointment for ${form.pet_name || 'my pet'} at Dhrisha's Pet Planet. My name is ${form.owner_name}, phone: ${form.mobile}. Preferred date: ${form.preferred_date || 'earliest available'} at ${form.preferred_time || 'any time'}. Problem: ${form.problem || 'General checkup'}. Please confirm!`
 
   const inp = `w-full border rounded-xl px-4 py-3 text-sm font-medium focus:outline-none transition-colors`
   const inpStyle = (k: string) => ({
@@ -169,10 +171,10 @@ export default function BookPage() {
               <select value={form.preferred_time} onChange={e=>set('preferred_time',e.target.value)}
                 className={inp} style={{ borderColor:'#E5E7EB' }}>
                 <option value="">— Select time —</option>
-                <optgroup label="☀️ Morning (10:30 AM – 2:00 PM)">
-                  {MORNING_SLOTS.map(t=><option key={t}>{t}</option>)}
+                <optgroup label="☀️ Day (9:30 AM – 6:30 PM) · Dhrisha's Pet Planet">
+                  {DAY_SLOTS.map(t=><option key={t}>{t}</option>)}
                 </optgroup>
-                <optgroup label="🌙 Evening (5:30 PM – 8:30 PM)">
+                <optgroup label="🌙 Evening (6:30 PM – 8:30 PM) · Paws Care &amp; Heal">
                   {EVENING_SLOTS.map(t=><option key={t}>{t}</option>)}
                 </optgroup>
               </select>
@@ -183,9 +185,9 @@ export default function BookPage() {
           {form.preferred_date && (
             <div className="mb-5">
               <p className="text-xs font-bold text-gray-500 mb-2">Quick Select Time:</p>
-              <p className="text-[10px] font-bold text-amber-600 uppercase tracking-wide mb-1.5">☀️ Morning — 10:30 AM to 2:00 PM</p>
+              <p className="text-[10px] font-bold text-amber-600 uppercase tracking-wide mb-1.5">☀️ Day (9:30 AM – 6:30 PM) · Dhrisha's Pet Planet</p>
               <div className="grid grid-cols-4 gap-2 max-sm:grid-cols-3 mb-3">
-                {MORNING_SLOTS.map(slot => (
+                {DAY_SLOTS.map(slot => (
                   <button key={slot} onClick={() => set('preferred_time', slot)}
                     className="py-2 text-xs font-semibold rounded-lg border transition-all"
                     style={{
@@ -197,7 +199,7 @@ export default function BookPage() {
                   </button>
                 ))}
               </div>
-              <p className="text-[10px] font-bold text-indigo-600 uppercase tracking-wide mb-1.5">🌙 Evening — 5:30 PM to 8:30 PM</p>
+              <p className="text-[10px] font-bold text-indigo-600 uppercase tracking-wide mb-1.5">🌙 Evening (6:30 PM – 8:30 PM) · Paws Care &amp; Heal</p>
               <div className="grid grid-cols-4 gap-2 max-sm:grid-cols-3">
                 {EVENING_SLOTS.map(slot => (
                   <button key={slot} onClick={() => set('preferred_time', slot)}
@@ -234,13 +236,20 @@ export default function BookPage() {
 
         {/* Location card */}
         <div className="mt-6 rounded-2xl p-6 text-white" style={{ background:'#111827' }}>
-          <h3 className="font-extrabold text-base mb-3">📍 Clinic Location</h3>
+          <h3 className="font-extrabold text-base mb-3">📍 Our Locations</h3>
           <p className="text-white/70 text-sm leading-[1.8]">
-            Ganapati Temple, double road, near Hindalga,<br/>
-            beside Shambavi Clinic, Hanuman Nagar,<br/>
-            Belagavi, Karnataka 590019
+            <span className="font-bold text-amber-400">Dhrisha's Pet Planet</span><br/>
+            #3270, Hari Nikunj, 2nd Cross, Bhagya Nagar<br/>
+            Belagavi, Karnataka 590006<br/>
+            ⏰ 9:30 AM – 6:30 PM · Mon–Sat
           </p>
-          <a href="https://maps.google.com/?q=Paws+Care+Heal+Belagavi+Hindalga" target="_blank" rel="noreferrer"
+          <p className="text-white/70 text-sm leading-[1.8] mt-3">
+            <span className="font-bold text-amber-400">Paws Care &amp; Heal</span><br/>
+            Near Ganapati Temple, Double Road, Hindalga<br/>
+            Beside Shambavi Clinic, Hanuman Nagar<br/>
+            ⏰ 6:30 PM – 8:30 PM · Mon–Sat
+          </p>
+          <a href="https://www.google.com/maps/place/Dhrishas+Pet+Planet/@15.8703859,74.4894242,17z" target="_blank" rel="noreferrer"
             className="inline-flex items-center gap-1.5 mt-4 text-white font-bold text-sm px-5 py-2.5 rounded-full transition-all"
             style={{ background:'#F59E0B' }}>
             📍 View on Google Maps

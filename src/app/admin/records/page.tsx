@@ -36,6 +36,7 @@ export default function AdminRecordsPage() {
   const [showAddPet, setShowAddPet] = useState(false)
   const [showEditPet, setShowEditPet] = useState(false)
   const [showAddVisit, setShowAddVisit] = useState(false)
+  const [viewingVisit, setViewingVisit] = useState<Visit | null>(null)
   const [editingVisit, setEditingVisit] = useState<Visit | null>(null)
   const [visitSaved, setVisitSaved] = useState(false)
   const [petSaved, setPetSaved] = useState(false)
@@ -676,22 +677,23 @@ export default function AdminRecordsPage() {
                           const waMsg = v.reminder_message ||
                             `Dear ${selected.owner_name}, your ${selected.pet_name} visit to clinic is due for vaccinations/deworming/tick treatments/treatment follow up Visit Dhrisha's Pet Planet - Bhagya nagar 2nd cross (9.30am to 6.30pm) & Paws Care and heal pet clinic - Hanuman nagar (6.45pm to 8.30pm - Sunday Holiday)`
                           return (
-                            <tr key={v.id} className={i % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                            <tr key={v.id} onClick={() => setViewingVisit(v)}
+                              className={`cursor-pointer ${i % 2 === 0 ? 'bg-white' : 'bg-gray-50'} hover:bg-amber-50 transition-colors`}>
                               <td className="px-4 py-3.5 text-sm font-semibold whitespace-nowrap">{v.visit_date}</td>
                               <td className="px-4 py-3.5 text-sm max-w-[140px]">
-                                <div className="line-clamp-2 leading-snug text-gray-600">{v.complaint || '—'}</div>
+                                <div className="truncate leading-snug text-gray-600" title={v.complaint || ''}>{v.complaint || '—'}</div>
                               </td>
                               <td className="px-4 py-3.5 text-sm max-w-[140px]">
-                                <div className="line-clamp-2 leading-snug text-gray-600">{v.clinical_signs || '—'}</div>
+                                <div className="truncate leading-snug text-gray-600" title={v.clinical_signs || ''}>{v.clinical_signs || '—'}</div>
                               </td>
                               <td className="px-4 py-3.5 text-sm max-w-[140px]">
-                                <div className="line-clamp-2 leading-snug">{v.diagnosis}</div>
+                                <div className="truncate leading-snug" title={v.diagnosis}>{v.diagnosis}</div>
                               </td>
                               <td className="px-4 py-3.5 text-sm max-w-[140px]">
-                                <div className="line-clamp-2 leading-snug text-gray-600">{v.treatment}</div>
+                                <div className="truncate leading-snug text-gray-600" title={v.treatment}>{v.treatment}</div>
                               </td>
                               <td className="px-4 py-3.5 text-sm max-w-[120px]">
-                                <div className="line-clamp-2 leading-snug text-gray-500">{v.medicines || '—'}</div>
+                                <div className="truncate leading-snug text-gray-500" title={v.medicines || ''}>{v.medicines || '—'}</div>
                               </td>
                               <td className="px-4 py-3.5 whitespace-nowrap">
                                 {v.next_reminder_date ? (
@@ -703,7 +705,7 @@ export default function AdminRecordsPage() {
                                   </span>
                                 ) : '—'}
                               </td>
-                              <td className="px-4 py-3.5">
+                              <td className="px-4 py-3.5" onClick={e => e.stopPropagation()}>
                                 <div className="flex items-center gap-2 flex-wrap">
                                   {v.next_reminder_date && !isReminded && (
                                     <a href={`https://wa.me/91${selected.mobile}?text=${encodeURIComponent(waMsg)}`}
@@ -737,6 +739,68 @@ export default function AdminRecordsPage() {
               </div>
             </div>
           ) : null}
+        </div>
+      )}
+
+      {/* Visit Detail Modal */}
+      {viewingVisit && (
+        <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4"
+          onClick={() => setViewingVisit(null)}>
+          <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[85vh] overflow-y-auto"
+            onClick={e => e.stopPropagation()} style={{ animation: 'fadeInUp .2s ease both' }}>
+            <div className="flex items-center justify-between p-5 border-b border-gray-100 sticky top-0 bg-white z-10">
+              <h3 className="font-extrabold text-base flex items-center gap-2">
+                📋 Visit Details — {viewingVisit.visit_date}
+              </h3>
+              <button onClick={() => setViewingVisit(null)}
+                className="w-8 h-8 rounded-full flex items-center justify-center hover:bg-gray-100 transition-colors">
+                <X size={16} className="text-gray-500"/>
+              </button>
+            </div>
+            <div className="p-5 space-y-4">
+              {[
+                { label: 'Complaint', value: viewingVisit.complaint },
+                { label: 'Clinical Signs', value: viewingVisit.clinical_signs },
+                { label: 'Diagnosis', value: viewingVisit.diagnosis },
+                { label: 'Treatments', value: viewingVisit.treatment },
+                { label: 'Medications Prescribed', value: viewingVisit.medicines },
+              ].map(f => (
+                <div key={f.label}>
+                  <div className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">{f.label}</div>
+                  <div className="bg-gray-50 rounded-xl px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap">
+                    {f.value || '—'}
+                  </div>
+                </div>
+              ))}
+              {viewingVisit.next_reminder_date && (
+                <div className="border-t border-gray-100 pt-4">
+                  <div className="text-xs font-bold text-gray-500 uppercase tracking-wide mb-1.5">Reminder</div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-semibold">📅 {viewingVisit.next_reminder_date}</span>
+                    {viewingVisit.reminder_sent && (
+                      <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-green-100 text-green-700">✓ Sent</span>
+                    )}
+                  </div>
+                  {viewingVisit.reminder_message && (
+                    <div className="mt-2 text-sm text-gray-600 leading-relaxed bg-blue-50 rounded-xl px-4 py-3">
+                      💬 {viewingVisit.reminder_message}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+            <div className="flex justify-end gap-3 p-5 border-t border-gray-100">
+              <button onClick={() => setViewingVisit(null)}
+                className="px-5 py-2.5 text-sm font-bold rounded-full border border-gray-200 text-gray-600 hover:border-gray-400 transition-colors">
+                Close
+              </button>
+              <button onClick={() => { openEditVisit(viewingVisit); setViewingVisit(null) }}
+                className="px-5 py-2.5 text-sm font-extrabold rounded-full text-white transition-all"
+                style={{ background: '#F59E0B' }}>
+                <Edit2 size={13} className="inline mr-1.5"/> Edit Visit
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>
