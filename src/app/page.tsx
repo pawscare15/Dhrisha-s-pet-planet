@@ -148,17 +148,16 @@ export default function HomePage() {
       <section className="px-10 pb-14 bg-white max-sm:px-5 max-sm:pb-10">
         <div className="max-w-6xl mx-auto">
           <h2 className="font-black text-2xl md:text-4xl mb-6 md:mb-8 reveal">Our services</h2>
-          {/* Top 2 */}
+          {/* Top row - 2 wide cards */}
           <div className="grid md:grid-cols-2 gap-3 mb-3 reveal">
             {[
-              { name:'Surgery', count:'78', desc:'Planned, urgent and emergency operations for animals of any complexity. Expert surgical care under full anaesthesia monitoring.', emoji:'🔪' },
-              { name:'Therapy', count:'124', desc:'Systematic actions for the treatment and prevention of diseases. Complete diagnostics, pathology identification and treatment prescription.', emoji:'💊' },
+              { name:'Physical Examinations', desc:'Thorough health check-ups to keep your pet in the best shape.', emoji:'🩺' },
+              { name:'Minor Soft Tissue Surgeries', desc:'Expert care for minor surgical procedures performed with precision and care.', emoji:'🩹' },
             ].map(s => (
               <div key={s.name} className="rounded-[20px] p-5 md:p-7 relative overflow-hidden cursor-default transition-transform hover:-translate-y-1"
                 style={{ background: '#5BC8D4' }}>
                 <div className="text-white font-black text-lg md:text-xl mb-2">{s.name}</div>
                 <div className="text-white/88 text-sm leading-[1.65] mb-2 max-sm:text-xs">{s.desc}</div>
-                <div className="text-white/60 text-xs font-semibold mb-3 md:mb-4">{s.count} services</div>
                 <Link href="/services"
                   className="inline-flex items-center gap-1.5 bg-white/95 text-gray-900 font-bold text-xs md:text-sm px-3 md:px-4 py-2 md:py-2.5 rounded-full transition-all hover:bg-white">
                   Read more →
@@ -167,17 +166,20 @@ export default function HomePage() {
               </div>
             ))}
           </div>
-          {/* Bottom 3 */}
+          {/* Bottom row - 3 cards */}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-3 reveal">
             {[
-              { name:'Cardiology', count:'22', desc:'Taking care of your pet\'s cardiovascular system. Prevention and treatment of heart conditions.', emoji:'❤️' },
-              { name:'Diagnostics', count:'96', desc:'Diagnosis of pets is the basis of successful treatment. Blood tests, X-ray, ultrasound available.', emoji:'🔬' },
+              { name:'Vaccinations', desc:'Protect your pet with core and lifestyle-specific vaccines.', emoji:'💉' },
+              { name:'Grooming Services', desc:'Bathing, brushing, nail trimming & more to keep them looking and feeling great.', emoji:'✂️' },
+              { name:'Deworming & Tick Treatments', desc:'Safe & effective protection against parasites.', emoji:'🛡️' },
+              { name:'Diagnostics', desc:'Blood tests, X-rays and more for accurate diagnosis and treatment.', emoji:'🔬' },
+              { name:'Animal Birth Control Surgeries', desc:'Spay & neuter procedures for a healthier, happier life.', emoji:'🐾' },
+              { name:'Pet Prescription Diets & Nutrition', desc:'Specialized diets & nutrition plans for better health.', emoji:'🥣' },
             ].map(s => (
               <div key={s.name} className="rounded-[20px] p-5 md:p-7 relative overflow-hidden cursor-default transition-transform hover:-translate-y-1"
                 style={{ background: '#5BC8D4' }}>
                 <div className="text-white font-black text-lg md:text-xl mb-2">{s.name}</div>
                 <div className="text-white/88 text-sm leading-[1.65] mb-2 max-sm:text-xs">{s.desc}</div>
-                <div className="text-white/60 text-xs font-semibold mb-3 md:mb-4">{s.count} services</div>
                 <Link href="/services"
                   className="inline-flex items-center gap-1.5 bg-white/95 text-gray-900 font-bold text-xs md:text-sm px-3 md:px-4 py-2 md:py-2.5 rounded-full transition-all hover:bg-white">
                   Read more →
@@ -185,22 +187,10 @@ export default function HomePage() {
                 <div className="absolute bottom-3 md:bottom-4 right-3 md:right-4 text-4xl md:text-5xl">{s.emoji}</div>
               </div>
             ))}
-            {/* Appt card */}
-            <div className="rounded-[20px] p-5 md:p-7 flex flex-col justify-between" style={{ background: '#F59E0B' }}>
-              <div>
-                <div className="text-3xl md:text-4xl mb-2 md:mb-3">📅</div>
-                <div className="font-black text-lg md:text-xl text-gray-900 mb-2">Make an appointment</div>
-                <div className="text-gray-900/70 text-sm leading-[1.6] max-sm:text-xs">A wide range of veterinary services and specialists around the clock.</div>
-              </div>
-              <Link href="/book"
-                className="mt-3 md:mt-4 inline-flex items-center gap-1.5 bg-gray-900 text-white font-extrabold text-xs md:text-sm px-4 md:px-5 py-2 md:py-3 rounded-full w-fit transition-all hover:bg-gray-700">
-                Book now →
-              </Link>
-            </div>
           </div>
           <div className="text-center mt-5 md:mt-6 reveal">
             <Link href="/services" className="inline-flex items-center gap-1 font-bold text-gray-500 hover:text-amber-500 transition-colors text-sm">
-              View all services & prices <ChevronRight size={14} />
+              View all services <ChevronRight size={14} />
             </Link>
           </div>
         </div>

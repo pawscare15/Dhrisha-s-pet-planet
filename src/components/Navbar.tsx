@@ -6,7 +6,7 @@ import { Menu, X, Phone } from 'lucide-react'
 
 const links = [
   { href: '/',                  label: 'Home' },
-  { href: '/services',          label: 'Services & Prices' },
+  { href: '/services',          label: 'Services' },
   { href: '/offers',            label: 'Special Offers' },
   { href: '/success-stories',   label: 'Success Stories' },
   { href: '/book',              label: 'Book Appointment', highlight: true },

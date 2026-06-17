@@ -1,6 +1,8 @@
 'use client'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { supabase } from '@/lib/supabase'
+import type { Story } from '@/lib/supabase'
 
 function useReveal() {
   useEffect(() => {
@@ -73,6 +75,16 @@ const STORIES = [
 ]
 
 export default function SuccessStoriesPage() {
+  const [dbStories, setDbStories] = useState<Story[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    supabase.from('stories').select('*').order('created_at', { ascending: false }).then(({ data }) => {
+      setDbStories(data || [])
+      setLoading(false)
+    })
+  }, [])
+
   useReveal()
   return (
     <div className="min-h-screen bg-white">
@@ -84,6 +96,54 @@ export default function SuccessStoriesPage() {
           Read what our happy pet parents have to say about their experience at Paws Care and Heal Pet Clinic, Belagavi.
         </p>
       </div>
+
+      {/* Database success stories */}
+      {!loading && dbStories.length > 0 && (
+        <div className="px-10 pb-10 max-sm:px-5">
+          <div className="max-w-6xl mx-auto">
+            <h2 className="font-black text-2xl mb-6 reveal">🐾 Our Recent Success Stories</h2>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+              {dbStories.map(s => (
+                <div key={s.id} className="bg-white rounded-[20px] overflow-hidden border border-gray-100 reveal"
+                  style={{ boxShadow:'0 2px 16px rgba(0,0,0,.08)' }}>
+                  <div className="h-44 flex items-center justify-center text-7xl relative"
+                    style={{ background: s.bg_color || '#F5A623' }}>
+                    {s.image_url ? (
+                      <img src={s.image_url} alt={s.pet_name} className="w-full h-full object-cover"/>
+                    ) : (
+                      <span>{s.pet_type === 'Cat' ? '🐈' : s.pet_type === 'Dog' ? '🐕' : '🐾'}</span>
+                    )}
+                    {s.is_featured && (
+                      <span className="absolute top-3 right-3 text-xs font-bold px-2.5 py-1 rounded-full text-white"
+                        style={{ background:'rgba(0,0,0,.4)' }}>⭐ Featured</span>
+                    )}
+                  </div>
+                  <div className="p-5">
+                    <div className="flex items-center justify-between mb-1">
+                      <h3 className="font-extrabold text-[17px]">{s.pet_name}</h3>
+                      <div className="flex gap-0.5 text-amber-400 text-sm">
+                        {Array.from({ length: s.rating || 5 }).map((_, i) => <span key={i}>★</span>)}
+                      </div>
+                    </div>
+                    <div className="text-xs text-gray-400 mb-3">
+                      {s.owner_name && <span>{s.owner_name}</span>}
+                      {s.pet_type && <span> · {s.pet_type}</span>}
+                      {(s.problem_tags || []).length > 0 && (
+                        <div className="flex gap-1.5 flex-wrap mt-1.5">
+                          {(s.problem_tags || []).map(t => (
+                            <span key={t} className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background:'#FEF3C7', color:'#92400E' }}>{t}</span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    <p className="text-sm text-gray-500 leading-[1.7]">&ldquo;{s.story}&rdquo;</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Client mosaic grid — Real clients */}
       <div className="px-10 pb-10 max-sm:px-5">

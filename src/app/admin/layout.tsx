@@ -9,7 +9,7 @@ const NAV = [
   { href: '/admin/records',        icon: '🗂️', label: 'Pet Records' },
   { href: '/admin/reminders',      icon: '🔔', label: 'Reminders' },
   { href: '/admin/success-stories',icon: '🌟', label: 'Success Stories' },
-  { href: '/admin/services-mgmt',  icon: '🩺', label: 'Services & Prices' },
+  { href: '/admin/offers-mgmt',   icon: '🎉', label: 'Special Offers' },
 ]
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
