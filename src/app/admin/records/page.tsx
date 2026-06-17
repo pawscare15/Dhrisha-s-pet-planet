@@ -232,31 +232,33 @@ export default function AdminRecordsPage() {
       visitsMap[v.pet_id].push(v)
     }
 
-    const rows: string[][] = [['Pet Name','Pet Type','Breed','Gender','Age','Owner Name','Mobile',
+    const header = ['Pet Name','Pet Type','Breed','Gender','Age','Owner Name','Mobile',
       'Visit Date','Complaint','Clinical Signs','Diagnosis','Treatments','Medications',
-      'Next Reminder Date','Reminder Sent','Reminder Message']]
+      'Next Reminder Date','Reminder Sent','Reminder Message']
 
+    const data: any[][] = []
     for (const pet of allPets) {
       const visits = visitsMap[pet.id!] || []
       if (visits.length === 0) {
-        rows.push([pet.pet_name, pet.pet_type, pet.breed||'', pet.gender||'', pet.pet_age||'', pet.owner_name, pet.mobile,
+        data.push([pet.pet_name, pet.pet_type, pet.breed||'', pet.gender||'', pet.pet_age||'', pet.owner_name, pet.mobile,
           '','','','','','','','',''])
       }
       for (const v of visits) {
-        rows.push([pet.pet_name, pet.pet_type, pet.breed||'', pet.gender||'', pet.pet_age||'', pet.owner_name, pet.mobile,
+        data.push([pet.pet_name, pet.pet_type, pet.breed||'', pet.gender||'', pet.pet_age||'', pet.owner_name, pet.mobile,
           v.visit_date||'', v.complaint||'', v.clinical_signs||'', v.diagnosis, v.treatment, v.medicines||'',
           v.next_reminder_date||'', v.reminder_sent ? 'Yes' : 'No', v.reminder_message||''])
       }
     }
 
-    const csv = rows.map(r => r.map(c => `"${(c||'').replace(/"/g,'""')}"`).join(',')).join('\n')
-    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' })
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `pawscare-backup-${new Date().toISOString().split('T')[0]}.csv`
-    a.click()
-    URL.revokeObjectURL(url)
+    const XLSX = await import('xlsx')
+    const ws = XLSX.utils.aoa_to_sheet([header, ...data])
+    ws['!cols'] = header.map((_, i) => {
+      const widths: Record<number, number> = { 0:16, 1:10, 2:14, 3:8, 4:8, 5:20, 6:14, 7:12, 8:22, 9:22, 10:22, 11:22, 12:22, 13:16, 14:8, 15:50 }
+      return { wch: widths[i] || 18 }
+    })
+    const wb = XLSX.utils.book_new()
+    XLSX.utils.book_append_sheet(wb, ws, 'Pet Records')
+    XLSX.writeFile(wb, `pawscare-backup-${new Date().toISOString().split('T')[0]}.xlsx`)
   }
 
   const backToGrid = () => {
@@ -309,7 +311,7 @@ export default function AdminRecordsPage() {
         <button onClick={exportToCsv}
           className="flex items-center gap-2 text-white font-extrabold text-sm px-4 py-3 rounded-xl transition-all hover:-translate-y-0.5"
           style={{ background: '#10B981' }}>
-          📥 Export CSV
+          📥 Export Excel
         </button>
       </div>
 
