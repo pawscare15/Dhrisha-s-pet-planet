@@ -1,8 +1,6 @@
 'use client'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import Link from 'next/link'
-import { supabase } from '@/lib/supabase'
-import type { Story } from '@/lib/supabase'
 
 function useReveal() {
   useEffect(() => {
@@ -15,31 +13,70 @@ function useReveal() {
   }, [])
 }
 
-const GOOGLE_REVIEWS = [
-  { name: 'Rajeshwari Nesargi', img: '/images/rajeshwari.webp', objPos: 'center top', bg: '#F5A623', rating: 5, review: 'Dr. Praveen is an excellent and compassionate veterinarian. He handled my dog Charlie\'s neutering with great care and patience, took time to address all our concerns, and was extremely gentle throughout. Highly recommend him for his skill and kindness.' },
-  { name: 'Ranjeet Mane', img: '/images/ranjeet.webp', objPos: 'center 30%', bg: '#5BC8D4', rating: 5, review: 'Absolutely love this vet clinic. Dr. Praveen is so friendly and knowledgeable.. and I would highly highly recommend him being his caring approach towards all pets. He really knows what he is doing, I express my heartfelt gratitude for his loyal service. So glad for the soonest recovery of my kitten!' },
-  { name: 'Meghana C', img: '/images/meghana.webp', objPos: 'center 20%', bg: '#9B6BC4', rating: 5, review: 'I have visited this clinic with my shiztzu for so many times now. Dr. Praveen is very compassionate and caring about animals and has a very practical approach towards treating them. He doesn\'t prescribe unnecessary treatments and medication as seen in other clinics. I am really grateful for the way he treated my pet. He\'s very kind and gentle, now he\'s favourite Dr. of my pet. Highly recommend this clinic.' },
-  { name: 'Gagan Lamani', img: '/images/gagan.webp', objPos: 'center 25%', bg: '#F59E0B', rating: 5, review: 'I recently had the pleasure of visiting Paws Care and Heal Pet Clinic, and I must say that my experience was exceptional. As a pet owner, finding a trustworthy and compassionate clinic for my furry companion is of utmost importance, and Paws Care and Heal surpassed my expectations in every way.' },
-  { name: 'Jake Light', img: '/images/jake.webp', objPos: 'center 30%', bg: '#0891B2', rating: 5, review: 'Extremely happy and relieved to find a good doctor for my pet. I was already taking my cat to another vet and was not happy. Dr. Praveen told it was nothing but just urinary tract infection and gave medicines which in 2 days worked. The cat simply had suffered for a month with the previous useless treatment. We also got the cat neutered and the surgery lasted for 30 mins and all went well.' },
-  { name: 'Aysha', img: '/images/aysha.webp', objPos: 'center 30%', bg: '#EC4899', rating: 5, review: 'We previously lost our beloved cat due to poor treatment from another doctor, and at the same time our Shih Tzu was also unwell. After switching to Dr. Praveen at Paws Care Clinic, we experienced a significant difference in care and treatment. He treated our pet effectively with minimal medication and ensured a smooth recovery. We truly appreciate his professionalism and dedication to pet care.' },
-  { name: 'Nazneen Soudagar', img: '/images/nazneen.webp', objPos: 'center 25%', bg: '#8B9EB5', rating: 5, review: 'I must say… I have never come across such caring and polite doctor till now. Excellent service and well maintained hygienic clinic for pets. I had taken my male cat for neutering… very finely he was being operated. My pet recovered in just couple of days. I would surely recommend Paws Care and Heal Pet Clinic to all those animal lovers.' },
+const STORIES = [
+  {
+    name: 'Rajeshwari Nesargi',
+    img: '/images/rajeshwari.webp',
+    objPos: 'center top',
+    bg: '#F5A623',
+    rating: 5,
+    review: 'Dr. Praveen is an excellent and compassionate veterinarian. He handled my dog Charlie\'s neutering with great care and patience, took time to address all our concerns, and was extremely gentle throughout. Highly recommend him for his skill and kindness.',
+  },
+  {
+    name: 'Ranjeet Mane',
+    img: '/images/ranjeet.webp',
+    objPos: 'center 30%',
+    bg: '#5BC8D4',
+    rating: 5,
+    review: 'Absolutely love this vet clinic. Dr. Praveen is so friendly and knowledgeable.. and I would highly highly recommend him being his caring approach towards all pets. He really knows what he is doing, I express my heartfelt gratitude for his loyal service. So glad for the soonest recovery of my kitten!',
+  },
+  {
+    name: 'Meghana C',
+    img: '/images/meghana.webp',
+    objPos: 'center 20%',
+    bg: '#9B6BC4',
+    rating: 5,
+    review: 'I have visited this clinic with my shiztzu for so many times now. Dr. Praveen is very compassionate and caring about animals and has a very practical approach towards treating them. He doesn\'t prescribe unnecessary treatments and medication as seen in other clinics. I am really grateful for the way he treated my pet. He\'s very kind and gentle, now he\'s favourite Dr. of my pet. Highly recommend this clinic.',
+  },
+  {
+    name: 'Gagan Lamani',
+    img: '/images/gagan.webp',
+    objPos: 'center 25%',
+    bg: '#F59E0B',
+    rating: 5,
+    review: 'I recently had the pleasure of visiting Paws Care and Heal Pet Clinic, and I must say that my experience was exceptional. As a pet owner, finding a trustworthy and compassionate clinic for my furry companion is of utmost importance, and Paws Care and Heal surpassed my expectations in every way.',
+  },
+  {
+    name: 'Jake Light',
+    img: '/images/jake.webp',
+    objPos: 'center 30%',
+    bg: '#0891B2',
+    rating: 5,
+    review: 'Extremely happy and relieved to find a good doctor for my pet. I was already taking my cat to another vet and was not happy. Dr. Praveen told it was nothing but just urinary tract infection and gave medicines which in 2 days worked. The cat simply had suffered for a month with the previous useless treatment. We also got the cat neutered and the surgery lasted for 30 mins and all went well.',
+  },
+  {
+    name: 'Aysha',
+    img: '/images/aysha.webp',
+    objPos: 'center 30%',
+    bg: '#EC4899',
+    rating: 5,
+    review: 'We previously lost our beloved cat due to poor treatment from another doctor, and at the same time our Shih Tzu was also unwell. After switching to Dr. Praveen at Paws Care Clinic, we experienced a significant difference in care and treatment. He treated our pet effectively with minimal medication and ensured a smooth recovery. We truly appreciate his professionalism and dedication to pet care.',
+  },
+  {
+    name: 'Nazneen Soudagar',
+    img: '/images/nazneen.webp',
+    objPos: 'center 25%',
+    bg: '#8B9EB5',
+    rating: 5,
+    review: 'I must say… I have never come across such caring and polite doctor till now. Excellent service and well maintained hygienic clinic for pets. I had taken my male cat for neutering… very finely he was being operated. My pet recovered in just couple of days. I would surely recommend Paws Care and Heal Pet Clinic to all those animal lovers.',
+  },
 ]
 
 export default function SuccessStoriesPage() {
-  const [dbStories, setDbStories] = useState<Story[]>([])
-
-  useEffect(() => {
-    supabase.from('stories').select('*').order('created_at', { ascending: false })
-      .then(({ data, error }) => {
-        if (error) console.error('Stories fetch error:', error)
-        else if (data) setDbStories(data)
-      })
-  }, [])
-
   useReveal()
-
   return (
     <div className="min-h-screen bg-white">
+      {/* Header */}
       <div className="text-center py-16 px-8 bg-white">
         <div className="inline-flex items-center gap-2 text-xs font-bold px-4 py-2 rounded-full mb-4" style={{ background:'#FEF3C7', color:'#D97706' }}>🌟 Real Reviews from Google</div>
         <h1 className="font-black text-4xl text-gray-900 mb-3">Success Stories</h1>
@@ -48,71 +85,7 @@ export default function SuccessStoriesPage() {
         </p>
       </div>
 
-      <div className="px-10 max-sm:px-5">
-        <div className="max-w-6xl mx-auto pb-16">
-          <h2 className="font-black text-3xl mb-8 reveal">What Pet Parents Say</h2>
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-            {dbStories.map(s => (
-              <div key={s.id} className="bg-white rounded-[20px] overflow-hidden border border-gray-100 reveal"
-                style={{ boxShadow:'0 2px 16px rgba(0,0,0,.08)' }}>
-                <div className="h-52 relative flex items-center justify-center text-7xl overflow-hidden"
-                  style={{ background: s.bg_color || '#F5A623' }}>
-                  {s.image_url ? (
-                    <img src={s.image_url} alt={s.pet_name} className="w-full h-full object-cover" />
-                  ) : (
-                    <span className="drop-shadow-lg">{s.pet_type === 'Cat' ? '🐈' : s.pet_type === 'Dog' ? '🐕' : '🐾'}</span>
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-                  {s.is_featured && (
-                    <span className="absolute top-3 right-3 text-xs font-bold px-2.5 py-1 rounded-full text-white" style={{ background:'rgba(0,0,0,.4)' }}>⭐ Featured</span>
-                  )}
-                </div>
-                <div className="p-5">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="font-extrabold text-[17px]">{s.owner_name || s.pet_name}</h3>
-                    <div className="flex gap-0.5 text-amber-400 text-sm">
-                      {Array.from({ length: s.rating || 5 }).map((_, i) => <span key={i}>★</span>)}
-                    </div>
-                  </div>
-                  <p className="text-sm text-gray-500 leading-[1.7]">&ldquo;{s.story}&rdquo;</p>
-                  <div className="mt-3 inline-flex items-center gap-1.5 text-xs text-gray-400 border-t border-gray-100 pt-3 w-full">
-                    <span className="text-base">{s.pet_type === 'Cat' ? '🐈' : s.pet_type === 'Dog' ? '🐕' : '🐾'}</span> {s.pet_name}
-                    {(s.problem_tags || []).length > 0 && (
-                      <span className="ml-auto flex gap-1">
-                        {(s.problem_tags || []).slice(0, 2).map(t => (
-                          <span key={t} className="text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background:'#FEF3C7', color:'#92400E' }}>{t}</span>
-                        ))}
-                      </span>
-                    )}
-                  </div>
-                </div>
-              </div>
-            ))}
-            {GOOGLE_REVIEWS.map(s => (
-              <div key={s.name} className="bg-white rounded-[20px] overflow-hidden border border-gray-100 reveal"
-                style={{ boxShadow:'0 2px 16px rgba(0,0,0,.08)', transition:'transform .2s' }}
-                onMouseEnter={e=>(e.currentTarget.style.transform='translateY(-4px)')}
-                onMouseLeave={e=>(e.currentTarget.style.transform='translateY(0)')}>
-                <div className="h-52 relative overflow-hidden" style={{ background: s.bg }}>
-                  <img src={s.img} alt={s.name + "'s pet"} className="w-full h-full object-cover" style={{ objectPosition: s.objPos }} />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
-                </div>
-                <div className="p-5">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="font-extrabold text-[17px]">{s.name}</h3>
-                    <div className="flex gap-0.5 text-amber-400 text-sm">{'★★★★★'.split('').map((star,i)=><span key={i}>{star}</span>)}</div>
-                  </div>
-                  <p className="text-sm text-gray-500 leading-[1.7]">&ldquo;{s.review}&rdquo;</p>
-                  <div className="mt-3 inline-flex items-center gap-1.5 text-xs text-gray-400">
-                    <span>📍</span> Reviewed on Google
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
+      {/* Client mosaic grid — Real clients */}
       <div className="px-10 pb-10 max-sm:px-5">
         <div className="max-w-6xl mx-auto reveal grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
           {[
@@ -137,6 +110,37 @@ export default function SuccessStoriesPage() {
         </div>
       </div>
 
+      {/* Detailed review cards */}
+      <div className="px-10 pb-16 max-sm:px-5">
+        <div className="max-w-6xl mx-auto">
+          <h2 className="font-black text-3xl mb-8 reveal">What Pet Parents Say</h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {STORIES.map(s => (
+              <div key={s.name} className="bg-white rounded-[20px] overflow-hidden border border-gray-100 reveal"
+                style={{ boxShadow:'0 2px 16px rgba(0,0,0,.08)', transition:'transform .2s' }}
+                onMouseEnter={e=>(e.currentTarget.style.transform='translateY(-4px)')}
+                onMouseLeave={e=>(e.currentTarget.style.transform='translateY(0)')}>
+                <div className="h-52 relative overflow-hidden" style={{ background: s.bg }}>
+                  <img src={s.img} alt={s.name + "'s pet"} className="w-full h-full object-cover" style={{ objectPosition: s.objPos }} />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+                </div>
+                <div className="p-5">
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="font-extrabold text-[17px]">{s.name}</h3>
+                    <div className="flex gap-0.5 text-amber-400 text-sm">{'★★★★★'.split('').map((star,i)=><span key={i}>{star}</span>)}</div>
+                  </div>
+                  <p className="text-sm text-gray-500 leading-[1.7]">&ldquo;{s.review}&rdquo;</p>
+                  <div className="mt-3 inline-flex items-center gap-1.5 text-xs text-gray-400">
+                    <span>📍</span> Reviewed on Google
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* CTA */}
       <div className="text-center py-12 px-8" style={{ background:'#F59E0B' }}>
         <h2 className="font-black text-2xl text-gray-900 mb-2">Your pet could be our next success story!</h2>
         <p className="text-gray-900/70 mb-6 text-[15px]">Book an appointment today and give your pet the care they deserve.</p>
