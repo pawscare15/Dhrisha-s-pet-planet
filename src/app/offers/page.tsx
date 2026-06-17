@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
+import { supabase } from '@/lib/supabase'
 
 interface Offer {
   id: string
@@ -22,8 +23,6 @@ export default function OffersPage() {
   useEffect(() => {
     const load = async () => {
       try {
-        // Dynamic import to avoid SSR issues
-        const { supabase } = await import('@/lib/supabase')
         const { data, error } = await supabase
           .from('special_offers')
           .select('*')
