@@ -6,8 +6,6 @@
 name: Supabase Heartbeat
 
 on:
-  push:
-    branches: [master]
   schedule:
     # 8:00 AM IST = 2:30 AM UTC (IST is UTC+5:30)
     - cron: '30 2 * * *'
